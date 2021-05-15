@@ -29,7 +29,6 @@ config:
     requirements: |
       awscli
       kubernetes==12.0.1
-      git+git://github.com/moj-analytical-services/mojap-airflow-tools.git@v0.0.1#egg=mojap-airflow-tools
   data-engineering-airflow:vpc:
     cidr_block: 10.192.0.0/16
     private_subnets:
