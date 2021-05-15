@@ -1,6 +1,14 @@
 from pulumi.resource import ResourceOptions
-from pulumi_aws import mwaa
-from pulumi_aws.mwaa import Environment, EnvironmentNetworkConfigurationArgs
+from pulumi_aws.mwaa import (
+    Environment,
+    EnvironmentNetworkConfigurationArgs,
+    EnvironmentLoggingConfigurationArgs,
+    EnvironmentLoggingConfigurationDagProcessingLogsArgs,
+    EnvironmentLoggingConfigurationSchedulerLogsArgs,
+    EnvironmentLoggingConfigurationTaskLogsArgs,
+    EnvironmentLoggingConfigurationWebserverLogsArgs,
+    EnvironmentLoggingConfigurationWorkerLogsArgs,
+)
 from .base import base_name, tagger, stack, mwaa_config, environment_name
 from .vpc import securityGroup, private_subnets
 from .s3 import bucket, requirementsBucketObject
@@ -13,6 +21,23 @@ environment = Environment(
     dag_s3_path="dags",
     environment_class=mwaa_config["environment_class"],
     execution_role_arn=executionRole.arn,
+    logging_configuration=EnvironmentLoggingConfigurationArgs(
+        dag_processing_logs=EnvironmentLoggingConfigurationDagProcessingLogsArgs(
+            enabled=True, log_level="INFO"
+        ),
+        scheduler_logs=EnvironmentLoggingConfigurationSchedulerLogsArgs(
+            enabled=True, log_level="INFO"
+        ),
+        task_logs=EnvironmentLoggingConfigurationTaskLogsArgs(
+            enabled=True, log_level="INFO"
+        ),
+        webserver_logs=EnvironmentLoggingConfigurationWebserverLogsArgs(
+            enabled=True, log_level="INFO"
+        ),
+        worker_logs=EnvironmentLoggingConfigurationWorkerLogsArgs(
+            enabled=True, log_level="INFO"
+        ),
+    ),
     max_workers=mwaa_config.get("max_workers"),
     min_workers=mwaa_config.get("min_workers"),
     name=environment_name,
