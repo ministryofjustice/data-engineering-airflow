@@ -7,7 +7,7 @@ from .base import tagger, base_name, mwaa_config
 
 bucket = Bucket(name=f"mojap-{base_name}", tagger=tagger, versioning={"enabled": True})
 
-BucketObject(
+requirementsBucketObject = BucketObject(
     resource_name=f"{base_name}-requirements",
     opts=ResourceOptions(parent=bucket),
     bucket=bucket.id,
