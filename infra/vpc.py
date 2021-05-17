@@ -99,7 +99,7 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
         cidr_block=private_cidr_block,
         map_public_ip_on_launch=False,
         vpc_id=vpc.id,
-        tags=tagger.create_tags(f"{base_name}-public-{availability_zone}"),
+        tags=tagger.create_tags(f"{base_name}-private-{availability_zone}"),
         opts=ResourceOptions(parent=vpc),
     )
     private_subnets.append(privateSubnet)
