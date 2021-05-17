@@ -1,6 +1,5 @@
 from data_engineering_pulumi_components.utils import Tagger
-from pulumi import get_stack, Config
-from data_engineering_pulumi_components.utils import Tagger
+from pulumi import Config, get_stack
 from pulumi_aws import get_caller_identity, get_region
 
 config = Config()

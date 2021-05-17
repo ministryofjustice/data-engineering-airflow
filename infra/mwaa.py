@@ -1,19 +1,20 @@
 from pulumi.resource import ResourceOptions
 from pulumi_aws.mwaa import (
     Environment,
-    EnvironmentNetworkConfigurationArgs,
     EnvironmentLoggingConfigurationArgs,
     EnvironmentLoggingConfigurationDagProcessingLogsArgs,
     EnvironmentLoggingConfigurationSchedulerLogsArgs,
     EnvironmentLoggingConfigurationTaskLogsArgs,
     EnvironmentLoggingConfigurationWebserverLogsArgs,
     EnvironmentLoggingConfigurationWorkerLogsArgs,
+    EnvironmentNetworkConfigurationArgs,
 )
-from .base import base_name, tagger, stack, mwaa_config, environment_name
-from .vpc import securityGroup, private_subnets
-from .s3 import bucket, requirementsBucketObject
-from .iam.roles import executionRole
+
+from .base import base_name, environment_name, mwaa_config, stack, tagger
 from .iam.role_policies import executionRolePolicy
+from .iam.roles import executionRole
+from .s3 import bucket, requirementsBucketObject
+from .vpc import private_subnets, securityGroup
 
 environment = Environment(
     resource_name=base_name,

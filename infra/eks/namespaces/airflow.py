@@ -1,11 +1,8 @@
-import pulumi_aws as aws
-import pulumi_eks as eks
 import pulumi_kubernetes as k8s
-from pulumi import Output, ResourceOptions
+from pulumi import ResourceOptions
+
 from ..cluster import cluster
 from ..kube2iam import chart
-from ...iam.roles import instanceRole
-from ...base import tagger
 
 # See https://docs.aws.amazon.com/mwaa/latest/userguide/mwaa-eks-example.html
 

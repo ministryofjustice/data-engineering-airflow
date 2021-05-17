@@ -1,7 +1,7 @@
 import pulumi_kubernetes as k8s
 from pulumi import ResourceOptions
 
-from ..base import region, eks_config
+from ..base import eks_config, region
 from .cluster import cluster
 
 clusterAutoscaler = k8s.helm.v3.Chart(

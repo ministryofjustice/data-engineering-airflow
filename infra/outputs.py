@@ -1,4 +1,5 @@
-from .eks.cluster import cluster
 from pulumi import export
+
+from .eks.cluster import cluster
 
 export("kubeconfig", cluster.kubeconfig)

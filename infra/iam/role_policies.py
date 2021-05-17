@@ -24,7 +24,8 @@ def get_execution_role_policy(args):
             GetPolicyDocumentStatementArgs(
                 actions=["airflow:PublishMetrics"],
                 resources=[
-                    f"arn:aws:airflow:{region}:{account_id}:environment/{environment_name}"
+                    f"arn:aws:airflow:{region}:{account_id}:environment/"
+                    f"{environment_name}"
                 ],
             ),
             GetPolicyDocumentStatementArgs(
@@ -46,7 +47,8 @@ def get_execution_role_policy(args):
                     "logs:DescribeLogGroups",
                 ],
                 resources=[
-                    f"arn:aws:logs:{region}:{account_id}:log-group:airflow-{environment_name}-*"
+                    f"arn:aws:logs:{region}:{account_id}:log-group:"
+                    f"airflow-{environment_name}-*"
                 ],
             ),
             GetPolicyDocumentStatementArgs(

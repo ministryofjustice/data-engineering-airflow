@@ -1,9 +1,9 @@
-from pulumi.resource import ResourceOptions
 import pulumi_kubernetes as k8s
-from .cluster import cluster
+from pulumi.resource import ResourceOptions
+
 from ..base import region
 from ..iam.roles import instanceRole
-
+from .cluster import cluster
 
 chart = k8s.helm.v3.Chart(
     release_name="kube2iam",
