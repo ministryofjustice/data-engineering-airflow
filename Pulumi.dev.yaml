@@ -9,7 +9,7 @@ config:
         role_arns:
           - arn:aws:iam::593291632749:role/restricted-admin
           - arn:aws:iam::189157455002:role/restricted-admin
-      kubernetes_version: 1.19
+      kubernetes_version: "1.20"
       node_group:
         instance_types:
           - t3a.small
