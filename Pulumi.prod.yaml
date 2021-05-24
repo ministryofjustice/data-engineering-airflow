@@ -1,0 +1,43 @@
+encryptionsalt: v1:POsrlyZRcWk=:v1:l8SFSiBTf92aAScU:Sn/erZqPKSD1DAittO0G6DvEvRnLig==
+config:
+  aws:assume_role:
+    role_arn: arn:aws:iam::593291632749:role/data-engineering-infrastructure
+  aws:region: eu-west-1
+  data-engineering-airflow:eks:
+    cluster:
+      role_mappings:
+        role_arns:
+          - arn:aws:iam::593291632749:role/restricted-admin
+          - arn:aws:iam::189157455002:role/restricted-admin
+      kubernetes_version: "1.20"
+      node_group:
+        instance_types:
+          - t3a.medium
+          - t3.medium
+          - t2.medium
+        scaling_config:
+          desired_size: 1
+          max_size: 25
+          min_size: 1
+    cluster_autoscaler:
+      chart_version: 9.9.2
+  data-engineering-airflow:mwaa:
+    airflow_version: 1.10.12
+    environment_class: mw1.medium
+    max_workers: 10
+    min_workers: 1
+    requirements: |
+      awscli
+      kubernetes==12.0.1
+  data-engineering-airflow:vpc:
+    cidr_block: 10.192.0.0/16
+    private_subnets:
+      cidr_blocks:
+        - 10.192.20.0/24
+        - 10.192.21.0/24
+        - 10.192.22.0/24
+    public_subnets:
+      cidr_blocks:
+        - 10.192.10.0/24
+        - 10.192.11.0/24
+        - 10.192.12.0/24
