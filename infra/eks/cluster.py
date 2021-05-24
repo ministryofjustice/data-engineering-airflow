@@ -51,6 +51,7 @@ nodeGroup = aws.eks.NodeGroup(
     instance_types=node_group_config["instance_types"],
     node_group_name="airflow",
     node_role_arn=instanceRole.arn,
+    release_version=node_group_config["ami_release_version"],
     scaling_config=aws.eks.NodeGroupScalingConfigArgs(
         **node_group_config["scaling_config"]
     ),
