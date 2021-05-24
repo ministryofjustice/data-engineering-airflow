@@ -8,7 +8,7 @@ env:
 jobs:
   get-stacks:
     name: Get Stacks
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, management-infrastructure]
     outputs:
       STACKS: ${{ steps.get-stacks.outputs.STACKS }}
     steps:
@@ -32,6 +32,8 @@ jobs:
         id: get-stacks
         run: |
           echo "::set-output name=STACKS::$(pulumi stack ls --json | jq -r '.[] | .name | tojson' | jq -cs)"
+        env:
+          PULUMI_CONFIG_PASSPHRASE: ""
   update-stack:
     name: Update Stack
     needs: get-stacks
@@ -68,7 +70,6 @@ jobs:
       - name: Deploy changes
         env:
           PULUMI_CONFIG_PASSPHRASE: ""
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pulumi stack select ${{ matrix.stack }}
           pulumi up --yes

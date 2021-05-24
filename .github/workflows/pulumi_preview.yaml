@@ -8,7 +8,7 @@ env:
 jobs:
   get-stacks:
     name: Get Stacks
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, management-infrastructure]
     outputs:
       STACKS: ${{ steps.get-stacks.outputs.STACKS }}
     steps:
@@ -32,6 +32,8 @@ jobs:
         id: get-stacks
         run: |
           echo "::set-output name=STACKS::$(pulumi stack ls --json | jq -r '.[] | .name | tojson' | jq -cs)"
+        env:
+          PULUMI_CONFIG_PASSPHRASE: ""
   preview-stack:
     name: Preview Stack
     needs: get-stacks
@@ -49,7 +51,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: eu-west-1
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
           role-skip-session-tagging: true
           role-duration-seconds: 3600
       - name: Set up Python
@@ -68,7 +70,6 @@ jobs:
       - name: Preview changes
         env:
           PULUMI_CONFIG_PASSPHRASE: ""
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pulumi stack select ${{ matrix.stack }}
           pulumi preview --diff
