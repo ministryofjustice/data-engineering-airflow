@@ -20,9 +20,9 @@ requirementsBucketObject = BucketObject(
 
 
 def prepare_kube_config(kube_config: str) -> str:
-    kube_config["users"][0]["user"]["exec"][
-        "command"
-    ] = "/usr/local/airflow/.local/bin/aws"
+    kube_config["users"][0]["user"]["exec"]["args"] = kube_config["users"][0]["user"][
+        "exec"
+    ]["args"][:-2]
     return json.dumps(kube_config, indent=4)
 
 
