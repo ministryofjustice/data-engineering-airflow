@@ -9,8 +9,9 @@ config:
         role_arns:
           - arn:aws:iam::593291632749:role/restricted-admin
           - arn:aws:iam::189157455002:role/restricted-admin
-      kubernetes_version: "1.20"
+      kubernetes_version: "1.21"
       node_group:
+        ami_release_version: 1.21.2-20210830
         instance_types:
           - t3a.small
           - t3.small
@@ -20,7 +21,7 @@ config:
           max_size: 2
           min_size: 1
     cluster_autoscaler:
-      chart_version: 9.9.2
+      chart_version: 9.10.7
   data-engineering-airflow:mwaa:
     airflow_version: 1.10.12
     environment_class: mw1.small
@@ -29,6 +30,7 @@ config:
     requirements: |
       awscli
       kubernetes==12.0.1
+      mojap-airflow-tools==0.0.2
   data-engineering-airflow:vpc:
     cidr_block: 10.192.0.0/16
     private_subnets:
