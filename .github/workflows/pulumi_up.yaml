@@ -31,7 +31,7 @@ jobs:
       - name: Get Stacks
         id: get-stacks
         run: |
-          echo "::set-output name=STACKS::$(pulumi stack ls --json | jq -r '.[] | .name | tojson' | jq -cs)"
+          echo "::set-output name=STACKS::$(find Pulumi.*.yaml | sed -ne "s/Pulumi\.\(.*\)\.yaml/\1/p" | jq --raw-input -cs 'split("\n") | map(select(. != ""))')"
         env:
           PULUMI_CONFIG_PASSPHRASE: ""
   update-stack:
@@ -71,5 +71,5 @@ jobs:
         env:
           PULUMI_CONFIG_PASSPHRASE: ""
         run: |
-          pulumi stack select ${{ matrix.stack }}
+          pulumi stack select -c ${{ matrix.stack }}
           pulumi up --yes
