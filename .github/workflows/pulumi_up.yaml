@@ -1,8 +1,8 @@
 name: Pulumi Update
 on:
   push:
-    branches:
-      - main
+    # branches:
+    #   - main
 env:
   AWS_ROLE_TO_ASSUME: arn:aws:iam::189157455002:role/github-actions-infrastructure
 jobs:
