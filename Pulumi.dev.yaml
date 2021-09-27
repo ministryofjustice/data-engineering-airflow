@@ -20,7 +20,6 @@ config:
         role_arns:
           - arn:aws:iam::593291632749:role/restricted-admin
           - arn:aws:iam::189157455002:role/restricted-admin
-          - arn:aws:iam::042130406152:role/github-actions-runner
     cluster_autoscaler:
       chart_version: 9.10.7
     kube2iam:
