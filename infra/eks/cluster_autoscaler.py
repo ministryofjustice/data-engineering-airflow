@@ -3,6 +3,7 @@ from pulumi import ResourceOptions
 
 from ..base import eks_config, region
 from .cluster import cluster
+from .github_actions import clusterRoleBinding, serviceAccount
 
 clusterAutoscaler = k8s.helm.v3.Chart(
     release_name="cluster-autoscaler",
@@ -18,5 +19,9 @@ clusterAutoscaler = k8s.helm.v3.Chart(
         },
         version=eks_config["cluster_autoscaler"]["chart_version"],
     ),
-    opts=ResourceOptions(provider=cluster.provider, parent=cluster),
+    opts=ResourceOptions(
+        depends_on=[serviceAccount, clusterRoleBinding],
+        provider=cluster.provider,
+        parent=cluster,
+    ),
 )
