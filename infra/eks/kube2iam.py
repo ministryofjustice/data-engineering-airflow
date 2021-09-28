@@ -4,7 +4,7 @@ from pulumi.resource import ResourceOptions
 from ..base import eks_config, region
 from ..iam.roles import instanceRole
 from .cluster import cluster
-from .github_actions import clusterRoleBinding, serviceAccount
+from .namespaces.github_actions import clusterRoleBinding, namespace, serviceAccount
 
 chart = k8s.helm.v3.Chart(
     release_name="kube2iam",
@@ -28,7 +28,7 @@ chart = k8s.helm.v3.Chart(
         version=eks_config["kube2iam"]["chart_version"],
     ),
     opts=ResourceOptions(
-        depends_on=[serviceAccount, clusterRoleBinding],
+        depends_on=[clusterRoleBinding, namespace, serviceAccount],
         provider=cluster.provider,
         parent=cluster,
     ),
