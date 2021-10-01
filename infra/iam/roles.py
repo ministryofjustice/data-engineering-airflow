@@ -1,3 +1,4 @@
+from pulumi.resource import ResourceOptions
 from pulumi_aws.iam import (
     GetPolicyDocumentStatementArgs,
     GetPolicyDocumentStatementPrincipalArgs,
@@ -86,4 +87,7 @@ instanceRole = Role(
     ],
     name=f"{base_name}-node-instance-role",
     tags=tagger.create_tags(f"{base_name}-node-instance-role"),
+    opts=ResourceOptions(
+        protect=True
+    ),  # Protected as deletion will break assume role policies that reference this role
 )
