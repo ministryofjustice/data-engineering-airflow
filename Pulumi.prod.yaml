@@ -7,7 +7,7 @@ config:
     cluster:
       kubernetes_version: "1.21"
       node_group:
-        ami_release_version: 1.21.2-20210830
+        ami_release_version: 1.21.2-20210914
         capacity_type: ON_DEMAND
         instance_types:
           - t3a.medium
