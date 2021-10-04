@@ -2,7 +2,7 @@ import pulumi_kubernetes as k8s
 from pulumi import ResourceOptions
 
 from ..cluster import cluster
-from ..kube2iam import chart
+from ..kube2iam import release
 
 # See https://docs.aws.amazon.com/mwaa/latest/userguide/mwaa-eks-example.html
 
@@ -12,7 +12,9 @@ namespace = k8s.core.v1.Namespace(
         name="airflow",
         annotations={"iam.amazonaws.com/allowed-roles": '["airflow_.*"]'},
     ),
-    opts=ResourceOptions(provider=cluster.provider, depends_on=[chart], parent=cluster),
+    opts=ResourceOptions(
+        provider=cluster.provider, depends_on=[release], parent=cluster
+    ),
 )
 
 role = k8s.rbac.v1.Role(
