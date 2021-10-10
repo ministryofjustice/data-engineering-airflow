@@ -1,5 +1,6 @@
-from pulumi_aws.iam import Policy, get_policy_document, GetPolicyDocumentStatementArgs
-from ..base import base_name, tagger, environment_name, region, account_id
+from pulumi_aws.iam import GetPolicyDocumentStatementArgs, Policy, get_policy_document
+
+from ..base import account_id, base_name, environment_name, region, tagger
 
 Policy(
     resource_name=base_name,
