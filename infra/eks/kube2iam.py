@@ -23,7 +23,6 @@ release = k8s.helm.v3.Release(
             ),
             "default-role": instanceRole.name,
             "namespace-restrictions": True,
-            "namespace-restriction-format": "regexp",
         },
         "host": {"iptables": True, "interface": "eni+"},
     },
