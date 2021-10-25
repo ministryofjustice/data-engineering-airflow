@@ -72,4 +72,4 @@ jobs:
           PULUMI_CONFIG_PASSPHRASE: ""
         run: |
           pulumi stack select -c ${{ matrix.stack }}
-          pulumi preview --diff
+          pulumi preview --refresh --diff
