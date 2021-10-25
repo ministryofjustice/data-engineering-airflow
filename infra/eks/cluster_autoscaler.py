@@ -14,7 +14,7 @@ release = k8s.helm.v3.Release(
     namespace="default",
     skip_await=True,
     values={
-        "autoDiscovery": {"clusterName": cluster.name},
+        "autoDiscovery": {"clusterName": cluster.eks_cluster.name},
         "awsRegion": region,
         "fullnameOverride": "cluster-autoscaler",
     },
