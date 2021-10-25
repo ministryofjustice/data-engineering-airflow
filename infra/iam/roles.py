@@ -91,3 +91,21 @@ instanceRole = Role(
         protect=True
     ),  # Protected as deletion will break assume role policies that reference this role
 )
+
+defaultRole = Role(
+    resource_name=f"{base_name}-default-pod-role",
+    assume_role_policy=get_policy_document(
+        statements=[
+            GetPolicyDocumentStatementArgs(
+                principals=[
+                    GetPolicyDocumentStatementPrincipalArgs(
+                        identifiers=["ec2.amazonaws.com"], type="Service"
+                    )
+                ],
+                actions=["sts:AssumeRole"],
+            )
+        ]
+    ).json,
+    name=f"{base_name}-default-pod-role",
+    tags=tagger.create_tags(f"{base_name}-default-pod-role"),
+)
