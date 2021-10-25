@@ -99,7 +99,7 @@ defaultRole = Role(
             GetPolicyDocumentStatementArgs(
                 principals=[
                     GetPolicyDocumentStatementPrincipalArgs(
-                        identifiers=["ec2.amazonaws.com"], type="Service"
+                        identifiers=[instanceRole.arn], type="AWS"
                     )
                 ],
                 actions=["sts:AssumeRole"],
