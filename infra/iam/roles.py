@@ -8,7 +8,7 @@ from pulumi_aws.iam import (
     get_policy_document,
 )
 
-from ..base import base_name, tagger
+from ..base import account_id, base_name, tagger
 
 executionRole = Role(
     resource_name=f"{base_name}-execution-role",
@@ -54,7 +54,8 @@ instanceRole = Role(
             policy=get_policy_document(
                 statements=[
                     GetPolicyDocumentStatementArgs(
-                        actions=["sts:AssumeRole"], resources=["*"]
+                        actions=["sts:AssumeRole"],
+                        resources=[f"arn:aws:iam::{account_id}:role/airflow*"],
                     )
                 ]
             ).json,
