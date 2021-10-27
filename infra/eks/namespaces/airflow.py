@@ -10,7 +10,7 @@ namespace = k8s.core.v1.Namespace(
     resource_name="airflow",
     metadata=k8s.meta.v1.ObjectMetaArgs(
         name="airflow",
-        annotations={"iam.amazonaws.com/allowed-roles": '["airflow_.*"]'},
+        annotations={"iam.amazonaws.com/allowed-roles": '["airflow*"]'},
     ),
     opts=ResourceOptions(
         provider=cluster.provider, depends_on=[release], parent=cluster

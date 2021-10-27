@@ -2,7 +2,7 @@ import pulumi_kubernetes as k8s
 from pulumi.resource import ResourceOptions
 
 from ..base import eks_config, region
-from ..iam.roles import instanceRole
+from ..iam.roles import defaultRole, instanceRole
 from .cluster import cluster
 
 release = k8s.helm.v3.Release(
@@ -21,9 +21,8 @@ release = k8s.helm.v3.Release(
             "base-role-arn": instanceRole.arn.apply(
                 lambda arn: arn.split("/")[0] + "/"
             ),
-            "default-role": instanceRole.name,
+            "default-role": defaultRole.name,
             "namespace-restrictions": True,
-            "namespace-restriction-format": "regexp",
         },
         "host": {"iptables": True, "interface": "eni+"},
     },
