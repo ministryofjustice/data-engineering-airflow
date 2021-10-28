@@ -8,7 +8,7 @@ from pulumi_aws.iam import (
     get_policy_document,
 )
 
-from ..base import base_name, tagger
+from ..base import account_id, base_name, tagger
 
 executionRole = Role(
     resource_name=f"{base_name}-execution-role",
@@ -54,7 +54,8 @@ instanceRole = Role(
             policy=get_policy_document(
                 statements=[
                     GetPolicyDocumentStatementArgs(
-                        actions=["sts:AssumeRole"], resources=["*"]
+                        actions=["sts:AssumeRole"],
+                        resources=[f"arn:aws:iam::{account_id}:role/airflow*"],
                     )
                 ]
             ).json,
@@ -90,4 +91,22 @@ instanceRole = Role(
     opts=ResourceOptions(
         protect=True
     ),  # Protected as deletion will break assume role policies that reference this role
+)
+
+defaultRole = Role(
+    resource_name=f"{base_name}-default-pod-role",
+    assume_role_policy=get_policy_document(
+        statements=[
+            GetPolicyDocumentStatementArgs(
+                principals=[
+                    GetPolicyDocumentStatementPrincipalArgs(
+                        identifiers=[instanceRole.arn], type="AWS"
+                    )
+                ],
+                actions=["sts:AssumeRole"],
+            )
+        ]
+    ).json,
+    name=f"{base_name}-default-pod-role",
+    tags=tagger.create_tags(f"{base_name}-default-pod-role"),
 )
