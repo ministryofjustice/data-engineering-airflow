@@ -23,8 +23,6 @@ config:
           - arn:aws:iam::042130406152:role/github-actions-runner
     cluster_autoscaler:
       chart_version: 9.10.7
-    gatekeeper:
-      chart_version: 3.6.0
     kube2iam:
       chart_version: 2.6.0
   data-engineering-airflow:mwaa:

@@ -1,20 +1,18 @@
 from infra import base, mwaa, s3, vpc
-from infra.eks import cluster, cluster_autoscaler, kube2iam
-from infra.eks.gatekeeper import gatekeeper
+from infra.eks import cluster, kube2iam, cluster_autoscaler
 from infra.eks.namespaces import airflow
-from infra.iam import policies, role_policies, roles
+from infra.iam import role_policies, roles, policies
 
 __all__ = [
     "airflow",
     "base",
-    "cluster",
-    "cluster_autoscaler",
-    "gatekeeper",
-    "kube2iam",
-    "mwaa",
-    "policies",
     "roles",
     "role_policies",
+    "policies",
+    "cluster",
+    "cluster_autoscaler",
+    "kube2iam",
+    "mwaa",
     "s3",
     "vpc",
 ]
