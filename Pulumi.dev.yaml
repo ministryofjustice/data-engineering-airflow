@@ -13,8 +13,8 @@ config:
           - t3.small
           - t2.small
         scaling_config:
-          desired_size: 1
-          max_size: 2
+          desired_size: 2
+          max_size: 5
           min_size: 1
       role_mappings:
         role_arns:
