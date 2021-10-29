@@ -1,8 +1,8 @@
 import pulumi_kubernetes as k8s
 from pulumi import ResourceOptions
 
-from ..cluster import cluster
-from ..kube2iam import kube2iam
+from .cluster import cluster
+from .kube2iam import kube2iam
 
 # See https://docs.aws.amazon.com/mwaa/latest/userguide/mwaa-eks-example.html
 

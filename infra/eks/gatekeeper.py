@@ -3,10 +3,10 @@ from pathlib import Path
 import pulumi_kubernetes as k8s
 from pulumi.resource import ResourceOptions
 
-from ...base import eks_config
-from ..cluster import cluster
-from ..kube2iam import kube2iam_namespace
-from ..cluster_autoscaler import cluster_autoscaler_namespace
+from ..base import eks_config
+from .cluster import cluster
+from .kube2iam import kube2iam_namespace
+from .cluster_autoscaler import cluster_autoscaler_namespace
 
 # See https://github.com/open-policy-agent/gatekeeper-library/
 
