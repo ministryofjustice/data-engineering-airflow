@@ -39,23 +39,39 @@ cluster = eks.Cluster(
     tags=tagger.create_tags(name=base_name),
 )
 
-node_group_config = cluster_config["node_group"]
+node_groups = cluster_config["node_groups"]
 
-nodeGroup = aws.eks.NodeGroup(
-    resource_name=base_name,
-    ami_type=node_group_config.get("ami_type", "AL2_x86_64"),
-    capacity_type=node_group_config.get("capacity_type", "SPOT"),
-    cluster_name=cluster.eks_cluster.name,
-    disk_size=node_group_config.get("disk_size", 20),
-    force_update_version=None,
-    instance_types=node_group_config["instance_types"],
-    node_group_name="airflow",
-    node_role_arn=instanceRole.arn,
-    release_version=node_group_config["ami_release_version"],
-    scaling_config=aws.eks.NodeGroupScalingConfigArgs(
-        **node_group_config["scaling_config"]
-    ),
-    subnet_ids=cluster.core.private_subnet_ids,
-    tags=tagger.create_tags("airflow"),
-    opts=ResourceOptions(parent=cluster),
-)
+for node_group in node_groups:
+    nodeGroup = aws.eks.NodeGroup(
+        resource_name=f"{base_name}-{node_group['name']}",
+        ami_type=node_group.get("ami_type", "AL2_x86_64"),
+        capacity_type=node_group.get("capacity_type", "SPOT"),
+        cluster_name=cluster.eks_cluster.name,
+        disk_size=node_group.get("disk_size", 20),
+        instance_types=node_group["instance_types"],
+        labels=node_group.get("labels"),
+        node_group_name=node_group["name"],
+        node_role_arn=instanceRole.arn,
+        release_version=node_group["ami_release_version"],
+        scaling_config=aws.eks.NodeGroupScalingConfigArgs(
+            **node_group["scaling_config"]
+        ),
+        subnet_ids=cluster.core.private_subnet_ids,
+        taints=None,  # TODO
+        tags=tagger.create_tags(f"{base_name}-{node_group['name']}"),
+        opts=ResourceOptions(parent=cluster),
+    )
+
+    for i, (key, value) in enumerate(node_group.get("labels", {}).items()):
+        aws.autoscaling.Tag(
+            resource_name=f"{base_name}-{node_group['name']}-{i}",
+            autoscaling_group_name=nodeGroup.resources.apply(
+                lambda x: x[0]["autoscaling_groups"][0]["name"]
+            ),
+            tag=aws.autoscaling.TagTagArgs(
+                key=f"k8s.io/cluster-autoscaler/node-template/label/{key}",
+                value=value,
+                propagate_at_launch=True,
+            ),
+            opts=ResourceOptions(parent=nodeGroup),
+        )

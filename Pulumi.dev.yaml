@@ -6,16 +6,28 @@ config:
   data-engineering-airflow:eks:
     cluster:
       kubernetes_version: "1.21"
-      node_group:
-        ami_release_version: 1.21.4-20211013
-        instance_types:
-          - t3a.small
-          - t3.small
-          - t2.small
-        scaling_config:
-          desired_size: 1
-          max_size: 2
-          min_size: 1
+      node_groups:
+        - name: standard
+          ami_release_version: 1.21.4-20211013
+          instance_types:
+            - t3a.small
+            - t3.small
+            - t2.small
+          scaling_config:
+            desired_size: 1
+            max_size: 2
+            min_size: 1
+        - name: high-memory
+          ami_type: AL2_ARM_64
+          ami_release_version: 1.21.4-20211013
+          instance_types:
+            - r6g.medium
+          labels:
+            high-memory: "true"
+          scaling_config:
+            desired_size: 0
+            max_size: 1
+            min_size: 0
       role_mappings:
         role_arns:
           - arn:aws:iam::593291632749:role/restricted-admin

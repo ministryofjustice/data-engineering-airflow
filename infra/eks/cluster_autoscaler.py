@@ -17,6 +17,7 @@ release = k8s.helm.v3.Release(
         "autoDiscovery": {"clusterName": cluster.eks_cluster.name},
         "awsRegion": region,
         "fullnameOverride": "cluster-autoscaler",
+        "podAnnotations": {"cluster-autoscaler.kubernetes.io/safe-to-evict": "false"},
     },
     version=eks_config["cluster_autoscaler"]["chart_version"],
     opts=ResourceOptions(

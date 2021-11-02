@@ -57,6 +57,10 @@ The `iam` directory contains all infrastructure related to IAM:
   by nodes in the managed node group
 - `role_policies.py` defines the role policy for the execution role for Airflow
 
+## Node Groups
+
+TODO
+
 ## Tasks
 
 ### How to manually deploy or update an environment
@@ -99,8 +103,6 @@ config.
 The AMI release version should match the Kubernetes version. For example, if the
 Kubernetes version is `1.20`, you should specify an AMI release version with the
 tag `1.20.*-*`.
-
-###
 
 ## Licence
 
