@@ -59,7 +59,49 @@ The `iam` directory contains all infrastructure related to IAM:
 
 ## Node Groups
 
-TODO
+Each stack creates two node groups:
+
+- standard
+- high-memory
+
+### Standard
+
+Nodes in the standard node group are unlabeled and do not have any taints. They
+should be used by all workloads, except those that are memory intensive. Pods
+will be scheduled on standard nodes unless:
+
+- they have tolerations that match the taints of another node group
+- they have a node selector that matches the labels of another node group
+
+### High-Memory
+
+Nodes in the high-memory node group run on memory-optimised EC2 instances. This
+node group should only be used for workloads that are memory intensive.
+
+For a pod to be scheduled on a node in the high-memory node group, it must have
+the following tolerations:
+
+```yaml
+tolerations:
+  - key: "high-memory"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"
+```
+
+It must also have the following node affinity:
+
+```yaml
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: "high-memory"
+              operator: "In"
+              values:
+                - "true"
+```
 
 ## Tasks
 
@@ -103,6 +145,20 @@ config.
 The AMI release version should match the Kubernetes version. For example, if the
 Kubernetes version is `1.20`, you should specify an AMI release version with the
 tag `1.20.*-*`.
+
+## Notes
+
+Tags set on a managed node group are note automatically propagated to the
+provisioned autoscaling group and consquently are not applied to EC2 instances
+created by the autoscaling group.
+
+To work around this, tags must be added to the autoscaling group provisioned by
+the managed node group independently of the creation of the managed node group
+itself.
+
+This could lead to a situation where untagged EC2 instances are created between
+the time at which the managed node group (and autoscaling group) are created and
+the tags are added to the autoscaling group.
 
 ## Licence
 
