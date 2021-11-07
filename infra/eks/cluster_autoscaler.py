@@ -9,7 +9,11 @@ cluster_autoscaler_namespace = k8s.core.v1.Namespace(
     resource_name="cluster-autoscaler-system",
     metadata=k8s.meta.v1.ObjectMetaArgs(
         name="cluster-autoscaler-system",
-        annotations={"iam.amazonaws.com/allowed-roles": '["*"]'},
+        annotations={
+            "iam.amazonaws.com/allowed-roles": clusterAutoscalerRole.name.apply(
+                lambda name: f'["{name}"]'
+            )
+        },
     ),
     opts=ResourceOptions(provider=cluster.provider, parent=cluster),
 )
