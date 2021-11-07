@@ -46,7 +46,7 @@ All infrastructure is defined in the `infra` directory:
 The `eks` directory contains all infrastructure related to EKS and Kubernetes:
 
 - `cluster.py` defines the cluster itself and a managed node group
-- `cluster_autoscaler.py` defines the cluster autoscaler Helm chart
+- `cluster_autoscaler.py` defines the Cluster Autoscaler Helm chart
 - `kube2iam.py` defines the kube2iam Helm chart
 - `namespaces/airflow.py` defines a namespace on the cluster in which Airflow
   can run pods
@@ -159,6 +159,12 @@ itself.
 This could lead to a situation where untagged EC2 instances are created between
 the time at which the managed node group (and autoscaling group) are created and
 the tags are added to the autoscaling group.
+
+## Reference
+
+- [Cluster Autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler)
+- [Gatekeeper](https://github.com/open-policy-agent/gatekeeper)
+- [kube2iam](https://github.com/jtblin/kube2iam)
 
 ## Licence
 
