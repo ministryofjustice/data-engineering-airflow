@@ -26,6 +26,7 @@ You should also:
 3.  Install dependencies:
 
         pip install -r requirements.txt
+        pip install -r requirements-dev.txt
 
 ## Structure
 
@@ -39,6 +40,7 @@ All infrastructure is defined in the `infra` directory:
   and a `requirements.txt` file used to install
   [Python dependencies](https://docs.aws.amazon.com/mwaa/latest/userguide/working-dags-dependencies.html)
   within the Airflow environment
+- `utils.py` contains utility functions
 - `vpc.py` defines the
   [network infrastructure](https://docs.aws.amazon.com/mwaa/latest/userguide/vpc-create.html)
   required to create an MWAA environment
@@ -47,12 +49,14 @@ The `eks` directory contains all infrastructure related to EKS and Kubernetes:
 
 - `cluster.py` defines the cluster itself and a managed node group
 - `cluster_autoscaler.py` defines the cluster autoscaler Helm chart
+- `gatekeeper.py` defines the Gatekeeper Helm chart and associated policies, the
+  rego code for which are stored in the in the `policies` directory
 - `kube2iam.py` defines the kube2iam Helm chart
-- `namespaces/airflow.py` defines a namespace on the cluster in which Airflow
-  can run pods
+- `airflow.py` defines a namespace on the cluster in which Airflow can run pods
 
 The `iam` directory contains all infrastructure related to IAM:
 
+- `policies.py` defines a policy to allow access to the Airflow UI
 - `roles.py` defines the execution role for Airflow and the instance role used
   by nodes in the managed node group
 - `role_policies.py` defines the role policy for the execution role for Airflow
@@ -100,7 +104,11 @@ The AMI release version should match the Kubernetes version. For example, if the
 Kubernetes version is `1.20`, you should specify an AMI release version with the
 tag `1.20.*-*`.
 
-###
+### How to run tests
+
+To run tests manually, run:
+
+    python -m pytest tests/
 
 ## Licence
 

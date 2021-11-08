@@ -1,26 +1,26 @@
 import pulumi_kubernetes as k8s
 from pulumi import ResourceOptions
 
-from ..cluster import cluster
-from ..kube2iam import release
+from .cluster import cluster
+from .kube2iam import kube2iam
 
 # See https://docs.aws.amazon.com/mwaa/latest/userguide/mwaa-eks-example.html
 
-namespace = k8s.core.v1.Namespace(
+airflow_namespace = k8s.core.v1.Namespace(
     resource_name="airflow",
     metadata=k8s.meta.v1.ObjectMetaArgs(
         name="airflow",
         annotations={"iam.amazonaws.com/allowed-roles": '["airflow*"]'},
     ),
     opts=ResourceOptions(
-        provider=cluster.provider, depends_on=[release], parent=cluster
+        provider=cluster.provider, depends_on=[kube2iam], parent=cluster
     ),
 )
 
 role = k8s.rbac.v1.Role(
     resource_name="airflow",
     metadata=k8s.meta.v1.ObjectMetaArgs(
-        name="mwaa-role", namespace=namespace.metadata.name
+        name="mwaa-role", namespace=airflow_namespace.metadata.name
     ),
     rules=[
         k8s.rbac.v1.PolicyRuleArgs(
@@ -44,7 +44,7 @@ role = k8s.rbac.v1.Role(
 roleBinding = k8s.rbac.v1.RoleBinding(
     resource_name="airflow",
     metadata=k8s.meta.v1.ObjectMetaArgs(
-        name="mwaa-role-binding", namespace=namespace.metadata.name
+        name="mwaa-role-binding", namespace=airflow_namespace.metadata.name
     ),
     subjects=[k8s.rbac.v1.SubjectArgs(kind="User", name="mwaa-service")],
     role_ref=k8s.rbac.v1.RoleRefArgs(

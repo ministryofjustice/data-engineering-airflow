@@ -19,4 +19,4 @@ base_name = f"airflow-{stack}"
 
 environment_name = stack
 
-tagger = Tagger(environment_name=stack)
+tagger = Tagger(environment_name=stack, application="Airflow")
