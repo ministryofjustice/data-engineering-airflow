@@ -14,8 +14,8 @@ config:
             - t3.small
             - t2.small
           scaling_config:
-            desired_size: 1
-            max_size: 2
+            desired_size: 2
+            max_size: 5
             min_size: 1
         - name: high-memory
           ami_type: AL2_ARM_64
@@ -39,6 +39,8 @@ config:
           - arn:aws:iam::042130406152:role/github-actions-runner
     cluster_autoscaler:
       chart_version: 9.10.7
+    gatekeeper:
+      chart_version: 3.6.0
     kube2iam:
       chart_version: 2.6.0
   data-engineering-airflow:mwaa:
