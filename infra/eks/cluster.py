@@ -57,5 +57,5 @@ nodeGroup = aws.eks.NodeGroup(
     ),
     subnet_ids=cluster.core.private_subnet_ids,
     tags=tagger.create_tags("airflow"),
-    opts=ResourceOptions(parent=cluster),
+    opts=ResourceOptions(parent=cluster, ignore_changes=["scaling_config"]),
 )
