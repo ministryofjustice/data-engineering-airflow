@@ -158,7 +158,7 @@ To run tests manually, run:
 
 ## Notes
 
-Tags set on a managed node group are note automatically propagated to the
+Tags set on a managed node group are not automatically propagated to the
 provisioned autoscaling group and consquently are not applied to EC2 instances
 created by the autoscaling group.
 
