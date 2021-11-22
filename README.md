@@ -48,7 +48,7 @@ All infrastructure is defined in the `infra` directory:
 The `eks` directory contains all infrastructure related to EKS and Kubernetes:
 
 - `cluster.py` defines the cluster itself and a managed node group
-- `cluster_autoscaler.py` defines the cluster autoscaler Helm chart
+- `cluster_autoscaler.py` defines the Cluster Autoscaler Helm chart
 - `gatekeeper.py` defines the Gatekeeper Helm chart and associated policies, the
   rego code for which are stored in the in the `policies` directory
 - `kube2iam.py` defines the kube2iam Helm chart
@@ -60,6 +60,52 @@ The `iam` directory contains all infrastructure related to IAM:
 - `roles.py` defines the execution role for Airflow and the instance role used
   by nodes in the managed node group
 - `role_policies.py` defines the role policy for the execution role for Airflow
+
+## Node Groups
+
+Each stack creates two node groups:
+
+- standard
+- high-memory
+
+### Standard
+
+Nodes in the standard node group are unlabeled and do not have any taints. They
+should be used by all workloads, except those that are memory intensive. Pods
+will be scheduled on standard nodes unless:
+
+- they have tolerations that match the taints of another node group
+- they have a node selector that matches the labels of another node group
+
+### High-Memory
+
+Nodes in the high-memory node group run on memory-optimised EC2 instances. This
+node group should only be used for workloads that are memory intensive.
+
+For a pod to be scheduled on a node in the high-memory node group, it must have
+the following tolerations:
+
+```yaml
+tolerations:
+  - key: "high-memory"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"
+```
+
+It must also have the following node affinity:
+
+```yaml
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: "high-memory"
+              operator: "In"
+              values:
+                - "true"
+```
 
 ## Tasks
 
@@ -109,6 +155,26 @@ tag `1.20.*-*`.
 To run tests manually, run:
 
     python -m pytest tests/
+
+## Notes
+
+Tags set on a managed node group are not automatically propagated to the
+provisioned autoscaling group and consquently are not applied to EC2 instances
+created by the autoscaling group.
+
+To work around this, tags must be added to the autoscaling group provisioned by
+the managed node group independently of the creation of the managed node group
+itself.
+
+This could lead to a situation where untagged EC2 instances are created between
+the time at which the managed node group (and autoscaling group) are created and
+the tags are added to the autoscaling group.
+
+## Reference
+
+- [Cluster Autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler)
+- [Gatekeeper](https://github.com/open-policy-agent/gatekeeper)
+- [kube2iam](https://github.com/jtblin/kube2iam)
 
 ## Licence
 
