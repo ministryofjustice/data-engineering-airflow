@@ -21,6 +21,7 @@ config:
         - name: high-memory
           ami_type: AL2_ARM_64
           ami_release_version: 1.21.4-20211013
+          capacity_type: ON_DEMAND
           instance_types:
             - r6g.4xlarge
           labels:
