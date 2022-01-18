@@ -3,7 +3,7 @@ from pulumi import ResourceOptions
 
 from .cluster import cluster
 from .kube2iam import kube2iam
-from base import environment_name
+from ..base import environment_name
 
 # See https://docs.aws.amazon.com/mwaa/latest/userguide/mwaa-eks-example.html
 
