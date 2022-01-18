@@ -1,5 +1,6 @@
 import pulumi_kubernetes as k8s
 from pulumi import ResourceOptions
+import json
 
 from .cluster import cluster
 from .kube2iam import kube2iam
@@ -11,7 +12,7 @@ airflow_namespace = k8s.core.v1.Namespace(
     resource_name="airflow",
     metadata=k8s.meta.v1.ObjectMetaArgs(
         name="airflow",
-        annotations={"iam.amazonaws.com/allowed-roles": [f"airflow_{environment_name}"]},
+        annotations={"iam.amazonaws.com/allowed-roles": json.dumps([f"airflow_{environment_name}"])}
     ),
     opts=ResourceOptions(
         provider=cluster.provider, depends_on=[kube2iam], parent=cluster
