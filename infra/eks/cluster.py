@@ -28,6 +28,13 @@ for role_arn in cluster_config["role_mappings"]["role_arns"]:
 cluster = eks.Cluster(
     resource_name=base_name,
     create_oidc_provider=True,
+    enabled_cluster_log_types=[
+        "api",
+        "audit",
+        "authenticator",
+        "controllerManager",
+        "scheduler",
+    ],
     instance_role=instanceRole,
     name=base_name,
     private_subnet_ids=[private_subnet.id for private_subnet in private_subnets],
