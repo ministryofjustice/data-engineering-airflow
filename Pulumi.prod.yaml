@@ -54,7 +54,7 @@ config:
       --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.0.2/constraints-3.7.txt"
       apache-airflow[cncf.kubernetes]
       kubernetes
-      mojap-airflow-tools==2.0.1
+      mojap-airflow-tools==2.1.0
   data-engineering-airflow:vpc:
     cidr_block: 10.194.0.0/16
     private_subnets:
