@@ -5,7 +5,7 @@ package k8spspallowprivilegeescalationpod
 
 violation[{"msg": msg, "details": {}}] {
 	allow_privilege_escalation(input.review.object)
-	msg := sprintf("Privilege escalation is not allowed. %v", input)
+	msg := "Privilege escalation is not allowed."
 }
 
 allow_privilege_escalation(pod) {
