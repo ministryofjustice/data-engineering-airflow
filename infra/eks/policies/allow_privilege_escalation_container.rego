@@ -1,6 +1,7 @@
 package k8spspallowprivilegeescalationcontainer
 
-# Prevent pods from running if any containers or init containers
+# Prevent pods from running if any containers or init containers have
+# allowPrivilegeEscalation set to true
 
 violation[{"msg": msg, "details": {}}] {
 	container := input_containers[_]
