@@ -3,7 +3,7 @@ from pulumi.resource import ResourceOptions
 
 from ..base import eks_config, region
 from ..iam.roles import defaultRole, instanceRole
-from .cluster import cluster
+from .cluster import cluster, cluster_provider
 
 kube2iam_namespace = k8s.core.v1.Namespace(
     resource_name="kube2iam-system",
@@ -11,7 +11,7 @@ kube2iam_namespace = k8s.core.v1.Namespace(
         name="kube2iam-system",
         annotations={"iam.amazonaws.com/allowed-roles": '["*"]'},
     ),
-    opts=ResourceOptions(provider=cluster.provider, parent=cluster),
+    opts=ResourceOptions(provider=cluster_provider, parent=cluster),
 )
 
 kube2iam = k8s.helm.v3.Release(
@@ -38,7 +38,7 @@ kube2iam = k8s.helm.v3.Release(
     },
     version=eks_config["kube2iam"]["chart_version"],
     opts=ResourceOptions(
-        provider=cluster.provider,
+        provider=cluster_provider,
         parent=cluster,
     ),
 )

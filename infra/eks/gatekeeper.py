@@ -5,18 +5,18 @@ from pulumi import Alias
 from pulumi.resource import ResourceOptions
 
 from ..base import eks_config
-from .cluster import cluster
+from .cluster import cluster, cluster_provider
 from .cluster_autoscaler import cluster_autoscaler_namespace
 from .kube2iam import kube2iam_namespace
 
 # See https://github.com/open-policy-agent/gatekeeper-library/
 
-namespace = k8s.core.v1.Namespace(
+gatekeeper_namespace = k8s.core.v1.Namespace(
     resource_name="gatekeeper-system",
     metadata=k8s.meta.v1.ObjectMetaArgs(
         name="gatekeeper-system",
     ),
-    opts=ResourceOptions(provider=cluster.provider, parent=cluster),
+    opts=ResourceOptions(provider=cluster_provider, parent=cluster),
 )
 
 gatekeeper = k8s.helm.v3.Release(
@@ -27,11 +27,11 @@ gatekeeper = k8s.helm.v3.Release(
         repo="https://open-policy-agent.github.io/gatekeeper/charts"
     ),
     name="gatekeeper",
-    namespace=namespace.metadata.name,
+    namespace=gatekeeper_namespace.metadata.name,
     skip_await=False,
     version=eks_config["gatekeeper"]["chart_version"],
     opts=ResourceOptions(
-        provider=cluster.provider,
+        provider=cluster_provider,
         parent=cluster,
     ),
 )
@@ -41,7 +41,7 @@ excluded_namespaces = [
     "kube-system",
     cluster_autoscaler_namespace.metadata.name,
     kube2iam_namespace.metadata.name,
-    namespace.metadata.name,
+    gatekeeper_namespace.metadata.name,
 ]
 
 # Prevent privileged containers
@@ -75,7 +75,7 @@ privilegedTemplate = k8s.apiextensions.CustomResource(
             }
         ],
     },
-    opts=ResourceOptions(provider=cluster.provider, parent=gatekeeper),
+    opts=ResourceOptions(provider=cluster_provider, parent=gatekeeper),
 )
 
 k8s.apiextensions.CustomResource(
@@ -89,7 +89,7 @@ k8s.apiextensions.CustomResource(
             "excludedNamespaces": excluded_namespaces,
         }
     },
-    opts=ResourceOptions(provider=cluster.provider, parent=privilegedTemplate),
+    opts=ResourceOptions(provider=cluster_provider, parent=privilegedTemplate),
 )
 
 # Prevent privilege escalation containers
@@ -126,7 +126,7 @@ allowPrivilegeEscalationContainerTemplate = k8s.apiextensions.CustomResource(
         ],
     },
     opts=ResourceOptions(
-        provider=cluster.provider,
+        provider=cluster_provider,
         parent=gatekeeper,
         aliases=[Alias(name="allow-privilege-escalation-template")],
     ),
@@ -146,7 +146,7 @@ k8s.apiextensions.CustomResource(
         }
     },
     opts=ResourceOptions(
-        provider=cluster.provider,
+        provider=cluster_provider,
         parent=allowPrivilegeEscalationContainerTemplate,
         aliases=[Alias(name="allow-privilege-escalation-constraint")],
     ),
@@ -185,7 +185,7 @@ allowPrivilegeEscalationPodTemplate = k8s.apiextensions.CustomResource(
             }
         ],
     },
-    opts=ResourceOptions(provider=cluster.provider, parent=gatekeeper),
+    opts=ResourceOptions(provider=cluster_provider, parent=gatekeeper),
 )
 
 k8s.apiextensions.CustomResource(
@@ -200,6 +200,6 @@ k8s.apiextensions.CustomResource(
         }
     },
     opts=ResourceOptions(
-        provider=cluster.provider, parent=allowPrivilegeEscalationPodTemplate
+        provider=cluster_provider, parent=allowPrivilegeEscalationPodTemplate
     ),
 )

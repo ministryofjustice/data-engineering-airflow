@@ -1,5 +1,8 @@
+import json
+
 import pulumi_aws as aws
 import pulumi_eks as eks
+import pulumi_kubernetes as k8s
 from pulumi import ResourceOptions
 
 from ..base import base_name, caller_arn, eks_config, tagger
@@ -44,6 +47,11 @@ cluster = eks.Cluster(
     version=str(cluster_config["kubernetes_version"]),
     vpc_id=vpc.id,
     tags=tagger.create_tags(name=base_name),
+)
+
+cluster_provider = k8s.Provider(
+    resource_name=base_name,
+    kubeconfig=cluster.kubeconfig.apply(lambda kubeconfig: json.dumps(kubeconfig)),
 )
 
 node_groups = cluster_config["node_groups"]
