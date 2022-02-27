@@ -55,6 +55,7 @@ instanceRole = Role(
             arn="arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
         ).arn,
         get_policy(arn="arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy").arn,
+        get_policy(arn="arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore").arn,
     ],
     name=f"{base_name}-node-instance-role",
     tags=tagger.create_tags(f"{base_name}-node-instance-role"),
