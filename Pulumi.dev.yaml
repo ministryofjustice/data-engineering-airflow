@@ -8,7 +8,7 @@ config:
       kubernetes_version: "1.21"
       node_groups:
         - name: standard
-          ami_release_version: 1.21.5-20220112
+          ami_release_version: 1.21.5-20220216
           instance_types:
             - t3a.small
             - t3.small
@@ -19,7 +19,7 @@ config:
             min_size: 1
         - name: high-memory
           ami_type: AL2_ARM_64
-          ami_release_version: 1.21.5-20220112
+          ami_release_version: 1.21.5-20220216
           instance_types:
             - r6g.medium
           labels:
