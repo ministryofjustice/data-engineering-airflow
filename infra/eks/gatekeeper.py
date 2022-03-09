@@ -93,80 +93,20 @@ k8s.apiextensions.CustomResource(
 )
 
 # Prevent privilege escalation containers
-# with open(
-#     file=Path(__file__).parent / "policies/allow_privilege_escalation_container.rego"
-# ) as file:
-#     allow_privilege_escalation_container_rego = file.read()
-
-# allowPrivilegeEscalationContainerTemplate = k8s.apiextensions.CustomResource(
-#     resource_name="allow-privilege-escalation-container-template",
-#     api_version="templates.gatekeeper.sh/v1beta1",
-#     kind="ConstraintTemplate",
-#     metadata=k8s.meta.v1.ObjectMetaArgs(name="k8spspallowprivilegeescalationcontainer"),
-#     spec={
-#         "crd": {
-#             "spec": {
-#                 "names": {"kind": "K8sPSPAllowPrivilegeEscalationContainer"},
-#                 "validation": {
-#                     "openAPIV3Schema": {
-#                         "description": (
-#                             "Controls restricting escalation to root privileges. "
-#                             "Corresponds to the allowPrivilegeEscalation field in a "
-#                             "PodSecurityPolicy."
-#                         )
-#                     }
-#                 },
-#             }
-#         },
-#         "targets": [
-#             {
-#                 "target": "admission.k8s.gatekeeper.sh",
-#                 "rego": allow_privilege_escalation_container_rego,
-#             }
-#         ],
-#     },
-#     opts=ResourceOptions(
-#         provider=cluster.provider,
-#         parent=gatekeeper,
-#         aliases=[Alias(name="allow-privilege-escalation-template")],
-#     ),
-# )
-
-# k8s.apiextensions.CustomResource(
-#     resource_name="allow-privilege-escalation-container-constraint",
-#     api_version="constraints.gatekeeper.sh/v1beta1",
-#     kind="K8sPSPAllowPrivilegeEscalationContainer",
-#     metadata=k8s.meta.v1.ObjectMetaArgs(
-#         name="psp-allow-privilege-escalation-container"
-#     ),
-#     spec={
-#         "match": {
-#             "kinds": [{"apiGroups": [""], "kinds": ["Pod"]}],
-#             "excludedNamespaces": excluded_namespaces,
-#         }
-#     },
-#     opts=ResourceOptions(
-#         provider=cluster.provider,
-#         parent=allowPrivilegeEscalationContainerTemplate,
-#         aliases=[Alias(name="allow-privilege-escalation-constraint")],
-#     ),
-# )
-
-# Prevent privilege escalation pods
 with open(
-    file=Path(__file__).parent / "policies/allow_privilege_escalation_pod.rego"
+    file=Path(__file__).parent / "policies/allow_privilege_escalation_container.rego"
 ) as file:
-    allow_privilege_escalation_pod_rego = file.read()
+    allow_privilege_escalation_container_rego = file.read()
 
-allowPrivilegeEscalationPodTemplate = k8s.apiextensions.CustomResource(
-    resource_name="allow-privilege-escalation-pod-template",
+allowPrivilegeEscalationContainerTemplate = k8s.apiextensions.CustomResource(
+    resource_name="allow-privilege-escalation-container-template",
     api_version="templates.gatekeeper.sh/v1beta1",
     kind="ConstraintTemplate",
-    metadata=k8s.meta.v1.ObjectMetaArgs(name="k8spspallowprivilegeescalationpod"),
+    metadata=k8s.meta.v1.ObjectMetaArgs(name="k8spspallowprivilegeescalationcontainer"),
     spec={
         "crd": {
             "spec": {
-                "names": {"kind": "K8sPSPAllowPrivilegeEscalationPod"},
+                "names": {"kind": "K8sPSPAllowPrivilegeEscalationContainer"},
                 "validation": {
                     "openAPIV3Schema": {
                         "description": (
@@ -181,18 +121,24 @@ allowPrivilegeEscalationPodTemplate = k8s.apiextensions.CustomResource(
         "targets": [
             {
                 "target": "admission.k8s.gatekeeper.sh",
-                "rego": allow_privilege_escalation_pod_rego,
+                "rego": allow_privilege_escalation_container_rego,
             }
         ],
     },
-    opts=ResourceOptions(provider=cluster.provider, parent=gatekeeper),
+    opts=ResourceOptions(
+        provider=cluster.provider,
+        parent=gatekeeper,
+        aliases=[Alias(name="allow-privilege-escalation-template")],
+    ),
 )
 
 k8s.apiextensions.CustomResource(
-    resource_name="allow-privilege-escalation-pod-constraint",
+    resource_name="allow-privilege-escalation-container-constraint",
     api_version="constraints.gatekeeper.sh/v1beta1",
-    kind="K8sPSPAllowPrivilegeEscalationPod",
-    metadata=k8s.meta.v1.ObjectMetaArgs(name="psp-allow-privilege-escalation-pod"),
+    kind="K8sPSPAllowPrivilegeEscalationContainer",
+    metadata=k8s.meta.v1.ObjectMetaArgs(
+        name="psp-allow-privilege-escalation-container"
+    ),
     spec={
         "match": {
             "kinds": [{"apiGroups": [""], "kinds": ["Pod"]}],
@@ -200,6 +146,60 @@ k8s.apiextensions.CustomResource(
         }
     },
     opts=ResourceOptions(
-        provider=cluster.provider, parent=allowPrivilegeEscalationPodTemplate
+        provider=cluster.provider,
+        parent=allowPrivilegeEscalationContainerTemplate,
+        aliases=[Alias(name="allow-privilege-escalation-constraint")],
     ),
 )
+
+# Prevent privilege escalation pods
+# with open(
+#     file=Path(__file__).parent / "policies/allow_privilege_escalation_pod.rego"
+# ) as file:
+#     allow_privilege_escalation_pod_rego = file.read()
+
+# allowPrivilegeEscalationPodTemplate = k8s.apiextensions.CustomResource(
+#     resource_name="allow-privilege-escalation-pod-template",
+#     api_version="templates.gatekeeper.sh/v1beta1",
+#     kind="ConstraintTemplate",
+#     metadata=k8s.meta.v1.ObjectMetaArgs(name="k8spspallowprivilegeescalationpod"),
+#     spec={
+#         "crd": {
+#             "spec": {
+#                 "names": {"kind": "K8sPSPAllowPrivilegeEscalationPod"},
+#                 "validation": {
+#                     "openAPIV3Schema": {
+#                         "description": (
+#                             "Controls restricting escalation to root privileges. "
+#                             "Corresponds to the allowPrivilegeEscalation field in a "
+#                             "PodSecurityPolicy."
+#                         )
+#                     }
+#                 },
+#             }
+#         },
+#         "targets": [
+#             {
+#                 "target": "admission.k8s.gatekeeper.sh",
+#                 "rego": allow_privilege_escalation_pod_rego,
+#             }
+#         ],
+#     },
+#     opts=ResourceOptions(provider=cluster.provider, parent=gatekeeper),
+# )
+
+# k8s.apiextensions.CustomResource(
+#     resource_name="allow-privilege-escalation-pod-constraint",
+#     api_version="constraints.gatekeeper.sh/v1beta1",
+#     kind="K8sPSPAllowPrivilegeEscalationPod",
+#     metadata=k8s.meta.v1.ObjectMetaArgs(name="psp-allow-privilege-escalation-pod"),
+#     spec={
+#         "match": {
+#             "kinds": [{"apiGroups": [""], "kinds": ["Pod"]}],
+#             "excludedNamespaces": excluded_namespaces,
+#         }
+#     },
+#     opts=ResourceOptions(
+#         provider=cluster.provider, parent=allowPrivilegeEscalationPodTemplate
+#     ),
+# )
