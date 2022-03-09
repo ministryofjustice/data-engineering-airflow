@@ -1,5 +1,5 @@
 from infra import base, mwaa, s3, vpc
-from infra.eks import airflow, cluster, cluster_autoscaler, gatekeeper, kube2iam
+from infra.eks import airflow, cluster, cluster_autoscaler, kube2iam
 from infra.iam import policies, role_policies, roles
 
 __all__ = [
