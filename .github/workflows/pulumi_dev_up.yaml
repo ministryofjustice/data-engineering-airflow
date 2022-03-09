@@ -31,7 +31,7 @@ jobs:
       - name: Get Stacks
         id: get-stacks
         run: |
-          echo "dev"
+          echo ::set-output name=STACKS::["dev"]
         env:
           PULUMI_CONFIG_PASSPHRASE: ""
   update-stack:
