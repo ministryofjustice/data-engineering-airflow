@@ -31,7 +31,7 @@ jobs:
       - name: Get Stacks
         id: get-stacks
         run: |
-          echo ::set-output name=STACKS::["dev"]
+          echo "::set-output name=STACKS::$(find Pulumi.dev.yaml | sed -ne "s/Pulumi\.\(.*\)\.yaml/\1/p" | jq --raw-input -cs 'split("\n") | map(select(. != ""))')"
         env:
           PULUMI_CONFIG_PASSPHRASE: ""
   update-stack:
