@@ -46,24 +46,26 @@ config:
     kube2iam:
       chart_version: 2.6.0
   data-engineering-airflow:mwaa:
-    airflow_version: 2.0.2
+    airflow_version: 2.2.2
     environment_class: mw1.medium
     max_workers: 10
     min_workers: 1
     requirements: |
-      --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.0.2/constraints-3.7.txt"
+      --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.2.2/constraints-3.7.txt"
       apache-airflow[cncf.kubernetes]
       kubernetes
-      mojap-airflow-tools==2.1.0
   data-engineering-airflow:vpc:
-    cidr_block: 10.194.0.0/16
+    cidr_block: 10.201.0.0/16
+    transit_gateway:
+      name: moj
+      id: tgw-009e14703041026a5
     private_subnets:
       cidr_blocks:
-        - 10.194.20.0/24
-        - 10.194.21.0/24
-        - 10.194.22.0/24
+        - 10.201.20.0/24
+        - 10.201.21.0/24
+        - 10.201.22.0/24
     public_subnets:
       cidr_blocks:
-        - 10.194.10.0/24
-        - 10.194.11.0/24
-        - 10.194.12.0/24
+        - 10.201.10.0/24
+        - 10.201.11.0/24
+        - 10.201.12.0/24
