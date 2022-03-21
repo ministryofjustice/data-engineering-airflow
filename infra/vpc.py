@@ -1,3 +1,4 @@
+from email.mime import base
 from pulumi import ResourceOptions
 from pulumi_aws.ec2 import (
     Eip,
@@ -11,8 +12,8 @@ from pulumi_aws.ec2 import (
     Subnet,
     Vpc,
 )
-from pulumi_aws import get_availability_zones
-from .base import tagger, config, base_name
+from pulumi_aws import get_availability_zones, ec2transitgateway
+from .base import tagger, config, base_name, region
 
 vpc_config = config.require_object("vpc")
 
@@ -140,3 +141,22 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
         subnet_id=privateSubnet.id,
         opts=ResourceOptions(parent=privateRouteTable),
     )
+
+transitGateway = ec2transitgateway.TransitGateway.get(
+    resource_name=vpc_config["transit_gateway"]["name"],
+    id=vpc_config["transit_gateway"]["id"],
+)
+
+transitGatewayVpcAttachment = ec2transitgateway.VpcAttachment(
+    resource_name=f"{base_name}",
+    dns_support="enable",
+    subnet_ids=[private_subnet.id for private_subnet in private_subnets],
+    transit_gateway_default_route_table_association=True,
+    transit_gateway_default_route_table_propagation=True,
+    transit_gateway_id=transitGateway.id,
+    vpc_id=vpc.id,
+    tags=tagger.create_tags(f"{base_name}"),
+    opts=ResourceOptions(
+        depends_on=[transitGateway].extend(private_subnets), parent=vpc
+    ),
+)

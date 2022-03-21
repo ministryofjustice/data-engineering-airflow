@@ -126,6 +126,7 @@ To deploy or update an environment:
 
         pulumi up --refresh
 
+    If you get an error message about helm not being able to create resources, ignore and try to pulumi up again.
 ### How to upgrade the Kubernetes version
 
 For all available Kubernetes versions, see the
@@ -155,6 +156,11 @@ tag `1.20.*-*`.
 To run tests manually, run:
 
     python -m pytest tests/
+
+### How to attach alpha_users to the airflow UI Access policy
+
+Please run the following, amking sure to exec into the restricted-admin role in the data account first:
+    python scripts/attach_role_policies.py
 
 ## Notes
 
