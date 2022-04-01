@@ -176,6 +176,14 @@ This could lead to a situation where untagged EC2 instances are created between
 the time at which the managed node group (and autoscaling group) are created and
 the tags are added to the autoscaling group.
 
+When creating a stack from new, you might need to run pulumi up multiple times because pulumi is unable
+to detect that resources were successfully created using helm.
+
+When creating a stack from new, the transit gateway attachment status will show as "Pending Acceptance" 
+and pulumi will fail to create the routes to the TGW. You will need to request the DSO team to accept 
+the transit gateway attachment. Once the state changes to "Available", you can run pulumi up again to 
+create the routes to the TGW.
+
 ## Reference
 
 - [Cluster Autoscaler](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler)
