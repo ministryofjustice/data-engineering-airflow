@@ -32,6 +32,11 @@ internetGateway = InternetGateway(
     opts=ResourceOptions(parent=vpc),
 )
 
+transitGateway = ec2transitgateway.TransitGateway.get(
+    resource_name=vpc_config["transit_gateway"]["name"],
+    id=vpc_config["transit_gateway"]["id"],
+)
+
 publicRouteTable = RouteTable(
     resource_name=f"{base_name}-public",
     vpc_id=vpc.id,
@@ -44,6 +49,13 @@ defaultPublicRoute = Route(
     gateway_id=internetGateway.id,
     route_table_id=publicRouteTable.id,
     opts=ResourceOptions(parent=publicRouteTable),
+)
+NomisPublicRoute = Route(
+    resource_name=f"{base_name}-public-nomis",
+    destination_cidr_block=vpc_config["nomis_destination"],
+    transit_gateway_id=transitGateway.id,
+    route_table_id=publicRouteTable.id,
+    opts=ResourceOptions(depends_on=transitGateway, parent=publicRouteTable),
 )
 
 securityGroup = SecurityGroup(
@@ -141,11 +153,13 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
         subnet_id=privateSubnet.id,
         opts=ResourceOptions(parent=privateRouteTable),
     )
-
-transitGateway = ec2transitgateway.TransitGateway.get(
-    resource_name=vpc_config["transit_gateway"]["name"],
-    id=vpc_config["transit_gateway"]["id"],
-)
+    nomisPrivateRoute = Route(
+        resource_name=f"{base_name}-private-{availability_zone}-nomis",
+        destination_cidr_block=vpc_config["nomis_destination"],
+        transit_gateway_id=transitGateway.id,
+        route_table_id=privateRouteTable.id,
+        opts=ResourceOptions(depends_on=transitGateway, parent=privateRouteTable),
+    )
 
 transitGatewayVpcAttachment = ec2transitgateway.VpcAttachment(
     resource_name=f"{base_name}",
