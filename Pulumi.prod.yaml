@@ -54,6 +54,7 @@ config:
       --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.2.2/constraints-3.7.txt"
       apache-airflow[cncf.kubernetes]
       kubernetes
+      mojap-airflow-tools==2.1.3
   data-engineering-airflow:vpc:
     cidr_block: 10.201.0.0/16
     transit_gateway:
