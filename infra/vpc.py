@@ -50,13 +50,6 @@ defaultPublicRoute = Route(
     route_table_id=publicRouteTable.id,
     opts=ResourceOptions(parent=publicRouteTable),
 )
-NomisPublicRoute = Route(
-    resource_name=f"{base_name}-public-nomis",
-    destination_cidr_block=vpc_config["nomis_destination"],
-    transit_gateway_id=transitGateway.id,
-    route_table_id=publicRouteTable.id,
-    opts=ResourceOptions(depends_on=transitGateway, parent=publicRouteTable),
-)
 
 securityGroup = SecurityGroup(
     resource_name=base_name,
@@ -153,13 +146,14 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
         subnet_id=privateSubnet.id,
         opts=ResourceOptions(parent=privateRouteTable),
     )
-    nomisPrivateRoute = Route(
-        resource_name=f"{base_name}-private-{availability_zone}-nomis",
-        destination_cidr_block=vpc_config["nomis_destination"],
-        transit_gateway_id=transitGateway.id,
-        route_table_id=privateRouteTable.id,
-        opts=ResourceOptions(depends_on=transitGateway, parent=privateRouteTable),
-    )
+    for route in vpc_config["transit_gateway"]["routes"]:
+        tgwPrivateRoute = Route(
+            resource_name=f"{base_name}-private-{availability_zone}-{route['name']}",
+            destination_cidr_block=route['cidr_block'],
+            transit_gateway_id=transitGateway.id,
+            route_table_id=privateRouteTable.id,
+            opts=ResourceOptions(depends_on=transitGateway, parent=privateRouteTable),
+        )
 
 transitGatewayVpcAttachment = ec2transitgateway.VpcAttachment(
     resource_name=f"{base_name}",
