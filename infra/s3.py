@@ -30,7 +30,7 @@ policy = json.dumps({"Version": "2012-10-17", "Statement": statement})
 
 bucket_policy = BucketPolicy(
     resource_name=f"mojap-{base_name}-bucket-policy",
-    bucket=bucket,
+    bucket=f"mojap-{base_name}",
     policy=policy,
     opts=ResourceOptions(parent=bucket),
 )
