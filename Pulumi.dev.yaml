@@ -58,6 +58,9 @@ config:
     transit_gateway:
       name: moj
       id: tgw-009e14703041026a5
+      routes:
+        - name: noms_live
+          cidr_block: 10.40.0.0/18
     private_subnets:
       cidr_blocks:
         - 10.200.20.0/24
@@ -68,3 +71,4 @@ config:
         - 10.200.10.0/24
         - 10.200.11.0/24
         - 10.200.12.0/24
+        

@@ -32,6 +32,11 @@ internetGateway = InternetGateway(
     opts=ResourceOptions(parent=vpc),
 )
 
+transitGateway = ec2transitgateway.TransitGateway.get(
+    resource_name=vpc_config["transit_gateway"]["name"],
+    id=vpc_config["transit_gateway"]["id"],
+)
+
 publicRouteTable = RouteTable(
     resource_name=f"{base_name}-public",
     vpc_id=vpc.id,
@@ -141,11 +146,14 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
         subnet_id=privateSubnet.id,
         opts=ResourceOptions(parent=privateRouteTable),
     )
-
-transitGateway = ec2transitgateway.TransitGateway.get(
-    resource_name=vpc_config["transit_gateway"]["name"],
-    id=vpc_config["transit_gateway"]["id"],
-)
+    for route in vpc_config["transit_gateway"]["routes"]:
+        tgwPrivateRoute = Route(
+            resource_name=f"{base_name}-private-{availability_zone}-{route['name']}",
+            destination_cidr_block=route['cidr_block'],
+            transit_gateway_id=transitGateway.id,
+            route_table_id=privateRouteTable.id,
+            opts=ResourceOptions(depends_on=transitGateway, parent=privateRouteTable),
+        )
 
 transitGatewayVpcAttachment = ec2transitgateway.VpcAttachment(
     resource_name=f"{base_name}",
