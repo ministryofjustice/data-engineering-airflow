@@ -145,7 +145,7 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
         route_table_id=privateRouteTable.id,
         subnet_id=privateSubnet.id,
         opts=ResourceOptions(parent=privateRouteTable),
-    )
+    # )
     # for name, cidr_block in vpc_config["transit_gateway"]["routes"]:
     #     additionalPrivateRoute = Route(
     #         resource_name=f"{base_name}-private-{availability_zone}-{name}",
