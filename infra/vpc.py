@@ -153,7 +153,7 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
             transit_gateway_id=transitGateway.id,
             route_table_id=privateRouteTable.id,
             opts=ResourceOptions(depends_on=transitGateway, parent=privateRouteTable),
-        )
+    )
 
 transitGatewayVpcAttachment = ec2transitgateway.VpcAttachment(
     resource_name=f"{base_name}",
