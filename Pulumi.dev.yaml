@@ -15,8 +15,8 @@ config:
             - t2.small
           scaling_config:
             desired_size: 2
-            max_size: 5
-            min_size: 1
+            max_size: 10
+            min_size: 0
         - name: high-memory
           ami_type: AL2_ARM_64
           ami_release_version: 1.21.5-20220216
