@@ -35,6 +35,7 @@ kube2iam = k8s.helm.v3.Release(
             "namespace-restrictions": True,
         },
         "host": {"iptables": True, "interface": "eni+"},
+        "tolerations": [{"operator": "Exists"}],
     },
     version=eks_config["kube2iam"]["chart_version"],
     opts=ResourceOptions(
