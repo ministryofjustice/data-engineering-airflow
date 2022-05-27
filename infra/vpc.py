@@ -113,7 +113,9 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
         resource_name=f"{base_name}-{availability_zone}",
         vpc=True,
         tags=tagger.create_tags(f"{base_name}-{availability_zone}"),
-        opts=ResourceOptions(depends_on=[internetGateway], parent=internetGateway),
+        opts=ResourceOptions(
+            depends_on=[internetGateway], parent=internetGateway, protect=True
+        ),
     )
     natGateway = NatGateway(
         resource_name=f"{base_name}-{availability_zone}",
