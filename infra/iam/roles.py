@@ -1,3 +1,4 @@
+from email.mime import base
 from pulumi.resource import ResourceOptions
 from pulumi_aws.iam import (
     GetPolicyDocumentStatementArgs,
@@ -152,4 +153,41 @@ defaultRole = Role(
     ).json,
     name=f"{base_name}-default-pod-role",
     tags=tagger.create_tags(f"{base_name}-default-pod-role"),
+)
+
+flowLogRole = Role(
+    resource_name=f"{base_name}-flow-log-role",
+    assume_role_policy=get_policy_document(
+        statements=[
+            GetPolicyDocumentStatementArgs(
+                principals=[
+                    GetPolicyDocumentStatementPrincipalArgs(
+                        identifiers=["vpc-flow-logs.amazonaws.com"], type="service"
+                    )
+                ],
+                actions=["sts:AssumeRole"],
+            )
+        ]
+    ).json,
+    inline_policies=[
+        RoleInlinePolicyArgs(
+            name="cloudwatch-logs",
+            policy=get_policy_document(
+                statements=[
+                    GetPolicyDocumentStatementArgs(
+                        actions=[
+                            "logs:CreateLogGroup",
+                            "logs:CreateLogStream",
+                            "logs:PutLogEvents",
+                            "logs:DescribeLogGroups",
+                            "logs:DescribeLogStreams",
+                        ],
+                        resources=["*"],
+                    )
+                ]
+            ).json,
+        )
+    ],
+    name=f"{base_name}-flow-log-role",
+    tags=tagger.create_tags(f"{base_name}-flow-log-role"),
 )

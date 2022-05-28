@@ -1,7 +1,9 @@
-from email.mime import base
 from pulumi import ResourceOptions
+from pulumi_aws import ec2transitgateway, get_availability_zones
+from pulumi_aws.cloudwatch import LogGroup
 from pulumi_aws.ec2 import (
     Eip,
+    FlowLog,
     InternetGateway,
     NatGateway,
     Route,
@@ -12,8 +14,9 @@ from pulumi_aws.ec2 import (
     Subnet,
     Vpc,
 )
-from pulumi_aws import get_availability_zones, ec2transitgateway
-from .base import tagger, config, base_name, region
+
+from .base import base_name, config, region, tagger
+from .iam.roles import flowLogRole
 
 vpc_config = config.require_object("vpc")
 
@@ -149,7 +152,7 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
     for route in vpc_config["transit_gateway"]["routes"]:
         tgwPrivateRoute = Route(
             resource_name=f"{base_name}-private-{availability_zone}-{route['name']}",
-            destination_cidr_block=route['cidr_block'],
+            destination_cidr_block=route["cidr_block"],
             transit_gateway_id=transitGateway.id,
             route_table_id=privateRouteTable.id,
             opts=ResourceOptions(depends_on=transitGateway, parent=privateRouteTable),
@@ -167,4 +170,20 @@ transitGatewayVpcAttachment = ec2transitgateway.VpcAttachment(
     opts=ResourceOptions(
         depends_on=[transitGateway].extend(private_subnets), parent=vpc
     ),
+)
+
+flowLogGroup = LogGroup(
+    resource_name=f"{base_name}-vpc-flow-log",
+    name=f"{base_name}-vpc-flow-log",
+    retention_in_days=400,
+    tags=tagger.create_tags(f"{base_name}-vpc-flow-log"),
+)
+flowLog = FlowLog(
+    resource_name=base_name,
+    iam_role_arn=flowLogRole.arn,
+    log_destination=flowLogGroup.arn,
+    traffic_type="ALL",
+    vpc_id=vpc.id,
+    tags=tagger.create_tags(base_name),
+    opts=ResourceOptions(parent=vpc),
 )
