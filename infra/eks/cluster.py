@@ -1,3 +1,5 @@
+import json
+
 import pulumi_aws as aws
 import pulumi_eks as eks
 from pulumi import ResourceOptions
@@ -42,6 +44,16 @@ cluster = eks.Cluster(
     role_mappings=role_mappings,
     skip_default_node_group=True,
     version=str(cluster_config["kubernetes_version"]),
+    vpc_cni_options=eks.VpcCniOptionsArgs(
+        init_image=(
+            f"602401143452.dkr.ecr.us-west-2.amazonaws.com/"
+            f"amazon-k8s-cni-init:v{cluster_config['vpc_cni_version']}"
+        ),
+        image=(
+            f"602401143452.dkr.ecr.us-west-2.amazonaws.com/"
+            f"amazon-k8s-cni:v{cluster_config['vpc_cni_version']}"
+        ),
+    ),
     vpc_id=vpc.id,
     tags=tagger.create_tags(name=base_name),
 )
