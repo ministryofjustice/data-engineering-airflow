@@ -1,5 +1,3 @@
-import json
-
 import pulumi_aws as aws
 import pulumi_eks as eks
 from pulumi import ResourceOptions
