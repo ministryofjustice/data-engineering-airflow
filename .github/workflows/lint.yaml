@@ -2,7 +2,8 @@ name: Lint
 on:
   - pull_request
 jobs:
-  preview:
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     strategy:
       matrix:
