@@ -15,7 +15,7 @@ from pulumi_aws.ec2 import (
     Vpc,
 )
 
-from .base import base_name, config, region, tagger
+from .base import base_name, config, tagger
 from .iam.roles import flowLogRole
 
 vpc_config = config.require_object("vpc")
