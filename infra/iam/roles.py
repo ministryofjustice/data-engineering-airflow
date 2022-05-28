@@ -1,4 +1,3 @@
-from email.mime import base
 from pulumi.resource import ResourceOptions
 from pulumi_aws.iam import (
     GetPolicyDocumentStatementArgs,
