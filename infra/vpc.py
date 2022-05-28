@@ -1,4 +1,3 @@
-from email.mime import base
 from pulumi import ResourceOptions
 from pulumi_aws.ec2 import (
     Eip,
@@ -13,7 +12,7 @@ from pulumi_aws.ec2 import (
     Vpc,
 )
 from pulumi_aws import get_availability_zones, ec2transitgateway
-from .base import tagger, config, base_name, region
+from .base import tagger, config, base_name
 
 vpc_config = config.require_object("vpc")
 
