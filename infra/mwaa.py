@@ -9,12 +9,18 @@ from pulumi_aws.mwaa import (
     EnvironmentLoggingConfigurationWorkerLogsArgs,
     EnvironmentNetworkConfigurationArgs,
 )
+from pulumi_aws.ses import EmailIdentity
 
 from .base import base_name, environment_name, mwaa_config, stack, tagger
 from .iam.role_policies import executionRolePolicy
 from .iam.roles import executionRole
 from .s3 import bucket, requirementsBucketObject
 from .vpc import private_subnets, securityGroup
+
+ses_email = EmailIdentity(
+    resource_name="data_engineering_email",
+    email="dataengineering@digital.justice.gov.uk",
+)
 
 environment = Environment(
     resource_name=base_name,
@@ -57,5 +63,5 @@ environment = Environment(
     requirements_s3_object_version=requirementsBucketObject.version_id,
     tags=tagger.create_tags(stack),
     webserver_access_mode="PUBLIC_ONLY",
-    opts=ResourceOptions(depends_on=[executionRolePolicy]),
+    opts=ResourceOptions(depends_on=[executionRolePolicy, ses_email]),
 )
