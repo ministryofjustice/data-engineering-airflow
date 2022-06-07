@@ -22,6 +22,12 @@ environment = Environment(
     dag_s3_path="dags",
     environment_class=mwaa_config["environment_class"],
     execution_role_arn=executionRole.arn,
+    airflow_configuration_options={
+        "smtp.smtp_host": "email-smtp.eu-west-1.amazonaws.com",
+        "smtp.smtp_port": 587,
+        "smtp.smtp_mail_from": "dataengineering@digital.justice.gov.uk",
+        "smtp.smtp_starttls": True,
+    },
     logging_configuration=EnvironmentLoggingConfigurationArgs(
         dag_processing_logs=EnvironmentLoggingConfigurationDagProcessingLogsArgs(
             enabled=True, log_level="INFO"
