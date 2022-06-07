@@ -1,7 +1,9 @@
 from pulumi import ResourceOptions
 from pulumi_aws import get_availability_zones
+from pulumi_aws.cloudwatch import LogGroup
 from pulumi_aws.ec2 import (
     Eip,
+    FlowLog,
     InternetGateway,
     NatGateway,
     Route,
@@ -15,6 +17,7 @@ from pulumi_aws.ec2 import (
 from pulumi_aws.ec2transitgateway import TransitGateway, VpcAttachment
 
 from .base import base_name, config, tagger
+from .iam.roles import flowLogRole
 
 vpc_config = config.require_object("vpc")
 
@@ -170,4 +173,20 @@ transitGatewayVpcAttachment = VpcAttachment(
     opts=ResourceOptions(
         depends_on=[transitGateway].extend(private_subnets), parent=vpc
     ),
+)
+
+flowLogGroup = LogGroup(
+    resource_name=f"{base_name}-vpc-flow-log",
+    name=f"{base_name}-vpc-flow-log",
+    retention_in_days=400,
+    tags=tagger.create_tags(f"{base_name}-vpc-flow-log"),
+)
+flowLog = FlowLog(
+    resource_name=base_name,
+    iam_role_arn=flowLogRole.arn,
+    log_destination=flowLogGroup.arn,
+    traffic_type="ALL",
+    vpc_id=vpc.id,
+    tags=tagger.create_tags(base_name),
+    opts=ResourceOptions(parent=vpc),
 )
