@@ -1,6 +1,7 @@
 from pulumi.resource import ResourceOptions
 from pulumi_aws.iam import (
     GetPolicyDocumentStatementArgs,
+    GetPolicyDocumentStatementConditionArgs,
     GetPolicyDocumentStatementPrincipalArgs,
     Role,
     RoleInlinePolicyArgs,
@@ -9,7 +10,7 @@ from pulumi_aws.iam import (
 )
 from pulumi_aws.iam.role_policy import RolePolicy
 
-from ..base import account_id, base_name, tagger
+from ..base import account_id, base_name, region, tagger
 
 executionRole = Role(
     resource_name=f"{base_name}-execution-role",
@@ -152,4 +153,53 @@ defaultRole = Role(
     ).json,
     name=f"{base_name}-default-pod-role",
     tags=tagger.create_tags(f"{base_name}-default-pod-role"),
+)
+
+flowLogRole = Role(
+    resource_name=f"{base_name}-flow-log-role",
+    assume_role_policy=get_policy_document(
+        statements=[
+            GetPolicyDocumentStatementArgs(
+                principals=[
+                    GetPolicyDocumentStatementPrincipalArgs(
+                        identifiers=["vpc-flow-logs.amazonaws.com"], type="Service"
+                    )
+                ],
+                actions=["sts:AssumeRole"],
+                conditions=[
+                    GetPolicyDocumentStatementConditionArgs(
+                        test="StringEquals",
+                        values=[account_id],
+                        variable="aws:SourceAccount",
+                    ),
+                    GetPolicyDocumentStatementConditionArgs(
+                        test="ArnLike",
+                        values=[f"arn:aws:ec2:{region}:{account_id}:vpc-flow-log/*"],
+                        variable="aws:SourceArn",
+                    ),
+                ],
+            )
+        ]
+    ).json,
+    inline_policies=[
+        RoleInlinePolicyArgs(
+            name="cloudwatch-logs",
+            policy=get_policy_document(
+                statements=[
+                    GetPolicyDocumentStatementArgs(
+                        actions=[
+                            "logs:CreateLogGroup",
+                            "logs:CreateLogStream",
+                            "logs:PutLogEvents",
+                            "logs:DescribeLogGroups",
+                            "logs:DescribeLogStreams",
+                        ],
+                        resources=["*"],
+                    )
+                ]
+            ).json,
+        )
+    ],
+    name=f"{base_name}-flow-log-role",
+    tags=tagger.create_tags(f"{base_name}-flow-log-role"),
 )

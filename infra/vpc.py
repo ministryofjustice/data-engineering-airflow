@@ -1,6 +1,9 @@
 from pulumi import ResourceOptions
+from pulumi_aws import get_availability_zones
+from pulumi_aws.cloudwatch import LogGroup
 from pulumi_aws.ec2 import (
     Eip,
+    FlowLog,
     InternetGateway,
     NatGateway,
     Route,
@@ -11,8 +14,10 @@ from pulumi_aws.ec2 import (
     Subnet,
     Vpc,
 )
-from pulumi_aws import get_availability_zones, ec2transitgateway
-from .base import tagger, config, base_name
+from pulumi_aws.ec2transitgateway import TransitGateway, VpcAttachment
+
+from .base import base_name, config, tagger
+from .iam.roles import flowLogRole
 
 vpc_config = config.require_object("vpc")
 
@@ -31,7 +36,7 @@ internetGateway = InternetGateway(
     opts=ResourceOptions(parent=vpc),
 )
 
-transitGateway = ec2transitgateway.TransitGateway.get(
+transitGateway = TransitGateway.get(
     resource_name=vpc_config["transit_gateway"]["name"],
     id=vpc_config["transit_gateway"]["id"],
 )
@@ -111,7 +116,9 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
         resource_name=f"{base_name}-{availability_zone}",
         vpc=True,
         tags=tagger.create_tags(f"{base_name}-{availability_zone}"),
-        opts=ResourceOptions(depends_on=[internetGateway], parent=internetGateway),
+        opts=ResourceOptions(
+            depends_on=[internetGateway], parent=internetGateway, protect=True
+        ),
     )
     natGateway = NatGateway(
         resource_name=f"{base_name}-{availability_zone}",
@@ -146,24 +153,40 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
         opts=ResourceOptions(parent=privateRouteTable),
     )
     for route in vpc_config["transit_gateway"]["routes"]:
-        tgwPrivateRoute = Route(
+        transitGatewayPrivateRoute = Route(
             resource_name=f"{base_name}-private-{availability_zone}-{route['name']}",
-            destination_cidr_block=route['cidr_block'],
+            destination_cidr_block=route["cidr_block"],
             transit_gateway_id=transitGateway.id,
             route_table_id=privateRouteTable.id,
             opts=ResourceOptions(depends_on=transitGateway, parent=privateRouteTable),
         )
 
-transitGatewayVpcAttachment = ec2transitgateway.VpcAttachment(
-    resource_name=f"{base_name}",
+transitGatewayVpcAttachment = VpcAttachment(
+    resource_name=base_name,
     dns_support="enable",
     subnet_ids=[private_subnet.id for private_subnet in private_subnets],
     transit_gateway_default_route_table_association=True,
     transit_gateway_default_route_table_propagation=True,
     transit_gateway_id=transitGateway.id,
     vpc_id=vpc.id,
-    tags=tagger.create_tags(f"{base_name}"),
+    tags=tagger.create_tags(base_name),
     opts=ResourceOptions(
         depends_on=[transitGateway].extend(private_subnets), parent=vpc
     ),
+)
+
+flowLogGroup = LogGroup(
+    resource_name=f"{base_name}-vpc-flow-log",
+    name=f"{base_name}-vpc-flow-log",
+    retention_in_days=400,
+    tags=tagger.create_tags(f"{base_name}-vpc-flow-log"),
+)
+flowLog = FlowLog(
+    resource_name=base_name,
+    iam_role_arn=flowLogRole.arn,
+    log_destination=flowLogGroup.arn,
+    traffic_type="ALL",
+    vpc_id=vpc.id,
+    tags=tagger.create_tags(base_name),
+    opts=ResourceOptions(parent=vpc),
 )
