@@ -1,3 +1,4 @@
+from pulumi import Config
 from pulumi.resource import ResourceOptions
 from pulumi_aws.mwaa import (
     Environment,
@@ -17,6 +18,10 @@ from .iam.roles import executionRole
 from .s3 import bucket, requirementsBucketObject
 from .vpc import private_subnets, securityGroup
 
+config = Config()
+smtp_user = config.require_secret("smtp_user")
+smtp_password = config.require_secret("smtp_password")
+
 ses_email = EmailIdentity(
     resource_name="data_engineering_email",
     email="dataengineering@digital.justice.gov.uk",
@@ -31,6 +36,8 @@ environment = Environment(
     airflow_configuration_options={
         "smtp.smtp_host": "email-smtp.eu-west-1.amazonaws.com",
         "smtp.smtp_port": 587,
+        "smtp.smtp_user": smtp_user,
+        "smtp.smtp_password": smtp_password,
         "smtp.smtp_mail_from": "dataengineering@digital.justice.gov.uk",
         "smtp.smtp_starttls": True,
     },
