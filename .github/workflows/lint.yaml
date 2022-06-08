@@ -31,3 +31,6 @@ jobs:
       - name: Lint Python files with flake8
         run: >
           flake8 .
+      - name: Lint YAML files with yamllint
+        run: >
+          yamllint .
