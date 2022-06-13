@@ -12,6 +12,9 @@ To work with this repository, you must have the following installed:
 
 - [Python 3.9 or later](https://www.python.org/downloads/)
 - [Pulumi](https://www.pulumi.com/docs/get-started/install/)
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+- [Kubectl](https://kubernetes.io/docs/tasks/tools/#install-kubectl)
+- [Node.js](https://nodejs.org/en/download/)
 
 You should also:
 
@@ -126,7 +129,7 @@ To deploy or update an environment:
 
         pulumi up --refresh
 
-    If you get an error message about helm not being able to create resources, ignore and try to pulumi up again.
+    If you get an error message during the pulumi up, try to pulumi up again before debugging
 ### How to upgrade the Kubernetes version
 
 For all available Kubernetes versions, see the
@@ -177,7 +180,10 @@ the time at which the managed node group (and autoscaling group) are created and
 the tags are added to the autoscaling group.
 
 When creating a stack from new, you might need to run pulumi up multiple times because pulumi is unable
-to detect that resources were successfully created using helm.
+to detect that resources were successfully created. Simply ignore the error message and try to pulumi up
+again. You might also need to refresh the pulumi stack. Only debug if the pulumi up fails again with the 
+same error message. Hence it is better to pulumi up locally first, and use the pulumi up github action as
+a confirmation that the change has been completed.
 
 When creating a stack from new, the transit gateway attachment status will show as "Pending Acceptance" 
 and pulumi will fail to create the routes to the TGW. You will need to request the DSO team to accept 
