@@ -17,6 +17,7 @@ config:
             desired_size: 2
             max_size: 10
             min_size: 0
+          disk_size: 80
         - name: high-memory
           ami_release_version: 1.21.5-20220429
           instance_types:
@@ -27,6 +28,7 @@ config:
             desired_size: 0
             max_size: 1
             min_size: 0
+          disk_size: 80
           taints:
             - effect: NO_SCHEDULE
               key: high-memory
