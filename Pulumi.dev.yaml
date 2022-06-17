@@ -10,13 +10,14 @@ config:
         - name: standard
           ami_release_version: 1.21.5-20220429
           instance_types:
-            - t3a.medium
-            - t3.medium
-            - t2.medium
+            - t3a.large
+            - t3.large
+            - t2.large
           scaling_config:
             desired_size: 2
             max_size: 10
             min_size: 0
+          disk_size: 150
         - name: high-memory
           ami_release_version: 1.21.5-20220429
           instance_types:
@@ -27,6 +28,7 @@ config:
             desired_size: 0
             max_size: 1
             min_size: 0
+          disk_size: 100
           taints:
             - effect: NO_SCHEDULE
               key: high-memory
@@ -71,4 +73,3 @@ config:
         - 10.200.10.0/24
         - 10.200.11.0/24
         - 10.200.12.0/24
-        

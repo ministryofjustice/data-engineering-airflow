@@ -2,7 +2,7 @@ name: Test
 on:
   - pull_request
 jobs:
-  preview:
+  test:
     name: Test
     runs-on: ubuntu-latest
     strategy:
