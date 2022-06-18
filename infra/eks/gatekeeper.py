@@ -1,8 +1,7 @@
 from pathlib import Path
 
 import pulumi_kubernetes as k8s
-from pulumi import Alias
-from pulumi.resource import Alias, ResourceOptions
+from pulumi import Alias, ResourceOptions
 
 from ..base import eks_config
 from .cluster import cluster, cluster_provider
