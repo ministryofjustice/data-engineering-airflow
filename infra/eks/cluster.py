@@ -44,11 +44,11 @@ cluster = eks.Cluster(
     version=str(cluster_config["kubernetes_version"]),
     vpc_cni_options=eks.VpcCniOptionsArgs(
         init_image=(
-            f"602401143452.dkr.ecr.us-west-2.amazonaws.com/"
+            f"602401143452.dkr.ecr.eu-west-1.amazonaws.com/"
             f"amazon-k8s-cni-init:v{cluster_config['vpc_cni_version']}"
         ),
         image=(
-            f"602401143452.dkr.ecr.us-west-2.amazonaws.com/"
+            f"602401143452.dkr.ecr.eu-west-1.amazonaws.com/"
             f"amazon-k8s-cni:v{cluster_config['vpc_cni_version']}"
         ),
     ),
