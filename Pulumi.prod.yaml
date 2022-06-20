@@ -40,7 +40,7 @@ config:
           - arn:aws:iam::593291632749:role/restricted-admin
           - arn:aws:iam::189157455002:role/restricted-admin
           - arn:aws:iam::042130406152:role/github-actions-runner
-      vpc_cni_version: 1.7.5
+      vpc_cni_version: 1.11.2
     cluster_autoscaler:
       chart_version: 9.10.7
     gatekeeper:
