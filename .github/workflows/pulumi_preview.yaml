@@ -23,6 +23,9 @@ jobs:
           role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
           role-skip-session-tagging: true
           role-duration-seconds: 3600
+      - name: Get AWS CLI Version
+        run: |
+          aws --version
       - name: Remove existing Pulumi installations
         run: |
           rm -rf $HOME/.pulumi
