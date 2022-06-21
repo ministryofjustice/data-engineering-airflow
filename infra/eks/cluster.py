@@ -5,11 +5,12 @@ import pulumi_eks as eks
 from pulumi import ResourceOptions
 from pulumi_kubernetes import Provider
 
-from ..base import base_name, caller_arn, eks_config, tagger
+from ..base import base_name, caller_arn, eks_config, region, tagger
 from ..iam.roles import executionRole, instanceRole
 from ..vpc import private_subnets, vpc
 
 cluster_config = eks_config["cluster"]
+vpc_cni_config = cluster_config["vpc_cni"]
 
 role_mappings = [
     eks.RoleMappingArgs(
@@ -47,12 +48,12 @@ cluster = eks.Cluster(
     version=str(cluster_config["kubernetes_version"]),
     vpc_cni_options=eks.VpcCniOptionsArgs(
         init_image=(
-            f"602401143452.dkr.ecr.eu-west-1.amazonaws.com/"
-            f"amazon-k8s-cni-init:v{cluster_config['vpc_cni_version']}"
+            f"{vpc_cni_config['image_account_id']}.dkr.ecr.{region}.amazonaws.com/"
+            f"amazon-k8s-cni-init:v{vpc_cni_config['image_version']}"
         ),
         image=(
-            f"602401143452.dkr.ecr.eu-west-1.amazonaws.com/"
-            f"amazon-k8s-cni:v{cluster_config['vpc_cni_version']}"
+            f"{vpc_cni_config['image_account_id']}.dkr.ecr.{region}.amazonaws.com/"
+            f"amazon-k8s-cni:v{vpc_cni_config['image_version']}"
         ),
     ),
     vpc_id=vpc.id,
