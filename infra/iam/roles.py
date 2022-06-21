@@ -100,6 +100,7 @@ clusterAutoscalerRole = Role(
                             "autoscaling:DescribeTags",
                             "autoscaling:SetDesiredCapacity",
                             "autoscaling:TerminateInstanceInAutoScalingGroup",
+                            "ec2:DescribeInstanceTypes",
                         ],
                         resources=["*"],
                     )
