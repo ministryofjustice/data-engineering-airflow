@@ -5,7 +5,7 @@ config:
   aws:region: eu-west-1
   data-engineering-airflow:eks:
     cluster:
-      kubernetes_version: "1.21"
+      kubernetes_version: "1.22"
       node_groups:
         - ami_release_version: 1.21.5-20220429
           instance_types:
