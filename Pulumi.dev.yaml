@@ -1,7 +1,7 @@
 encryptionsalt: v1:T9q7uDyEaE0=:v1:yF6EMYWiihI5gpmw:M76o4sQ9SL8p439+H+YJCbm44nEqXg==
 config:
   aws:assume_role:
-    role_arn: arn:aws:iam::593291632749:role/data-engineering-infrastructure
+    role_arn: arn:aws:iam::593291632749:role/data-engineering-airflow-deployer
   aws:region: eu-west-1
   data-engineering-airflow:eks:
     cluster:
@@ -37,7 +37,7 @@ config:
         role_arns:
           - arn:aws:iam::593291632749:role/restricted-admin
           - arn:aws:iam::189157455002:role/restricted-admin
-          - arn:aws:iam::042130406152:role/github-actions-runner
+          - arn:aws:iam::593291632749:role/data-engineering-airflow-deployer
       vpc_cni:
         image_version: 1.11.2
         image_account_id: 602401143452
