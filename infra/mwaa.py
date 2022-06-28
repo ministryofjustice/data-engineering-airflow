@@ -1,4 +1,3 @@
-from pulumi import Config
 from pulumi.resource import ResourceOptions
 from pulumi_aws.mwaa import (
     Environment,
@@ -12,15 +11,19 @@ from pulumi_aws.mwaa import (
 )
 from pulumi_aws.ses import EmailIdentity
 
+import boto3
 from .base import base_name, environment_name, mwaa_config, stack, tagger
 from .iam.role_policies import executionRolePolicy
 from .iam.roles import executionRole
 from .s3 import bucket, requirementsBucketObject
 from .vpc import private_subnets, securityGroup
 
-config = Config()
-smtp_user = config.require_secret("smtp_user")
-smtp_password = config.require_secret("smtp_password")
+client = boto3.client("ssm")
+response = client.get_parameters_by_path(
+    Path="/alpha/airflow/airflow_secrets/email/", Recursive=True, WithDecryption=True
+)
+smtp_user = response["Parameters"][1]["Value"]
+smtp_password = response["Parameters"][0]["Value"]
 
 ses_email = EmailIdentity(
     resource_name="data_engineering_email",

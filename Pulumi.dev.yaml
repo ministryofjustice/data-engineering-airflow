@@ -57,10 +57,6 @@ config:
       apache-airflow[cncf.kubernetes]
       kubernetes
       mojap-airflow-tools==2.2.1
-  data-engineering-airflow:smtp_password:
-    secure: v1:gmLUy5OEO5MX7tD0:+eTz/R1Ua3iqMG5sxkcGQhkA6ZzEFl5D8Chu/q+ZzOwxgv7Bf4GPlpq3Vpy1NaQCk4ZSN4LTImRxVKY4
-  data-engineering-airflow:smtp_user:
-    secure: v1:1Ke/J6SXvUfMZLVR:f7hyLhyCeuLZnBDx11nU0R5czvuDI/NcVcqz+xe4ZZWVISHn
   data-engineering-airflow:vpc:
     cidr_block: 10.200.0.0/16
     transit_gateway:
