@@ -1,27 +1,27 @@
 from pulumi_aws.iam import (
-    User,
     AccessKey,
-    Policy,
-    UserPolicyAttachment,
     get_policy_document,
     GetPolicyDocumentStatementArgs,
+    Policy,
+    User,
+    UserPolicyAttachment,
 )
 from pulumi.resource import ResourceOptions
 
 from ..base import base_name, tagger
 
 # create an IAM user who can send emails via SES
-smtp_user = User(
+smtpUser = User(
     resource_name=f"{base_name}-smtp-user",
     name=f"{base_name}-smtp-user",
     tags=tagger.create_tags(f"{base_name}-execution-role"),
 )
 
 # create an access key, which will form the SMTP user/pass
-access_key = AccessKey(
+accessKey = AccessKey(
     resource_name="access_key",
-    user=smtp_user.name,
-    opts=ResourceOptions(parent=smtp_user),
+    user=smtpUser.name,
+    opts=ResourceOptions(parent=smtpUser),
 )
 
 # allow the user to send emails
@@ -39,13 +39,13 @@ policy = Policy(
         ]
     ).json,
     tags=tagger.create_tags(f"{base_name}-ses-policy"),
-    opts=ResourceOptions(parent=smtp_user),
+    opts=ResourceOptions(parent=smtpUser),
 )
 
 # finally attach the policy to the user so it can send emails
 UserPolicyAttachment(
     resource_name="smtp",
-    user=smtp_user.name,
+    user=smtpUser.name,
     policy_arn=policy.arn,
-    opts=ResourceOptions(parent=smtp_user),
+    opts=ResourceOptions(parent=smtpUser),
 )
