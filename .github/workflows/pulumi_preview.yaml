@@ -53,6 +53,8 @@ jobs:
           unzip awscliv2.zip
           sudo ./aws/install --update
           aws --version
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v2.0
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
