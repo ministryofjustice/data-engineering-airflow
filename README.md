@@ -198,10 +198,9 @@ python scripts/attach_role_policies.py
 
 ## Email Notifications
 
-We use AWS Simple Email Service (SES) for email notifications.
+We use Amazon Simple Email Service (SES) for email notifications.
 
-We use `dataengineering@digital.justice.gov.uk` as the "from" email address. This email address has been added as a verified identity to the data account without assigning a default configuration set:
-https://docs.aws.amazon.com/ses/latest/dg/creating-identities.html#verify-email-addresses-procedure
+We use `dataengineering@digital.justice.gov.uk` as the "from" email address. This email address has been added as a verified identity to the data account without assigning a default configuration set. See [verify-email-addresses-procedure](https://docs.aws.amazon.com/ses/latest/dg/creating-identities.html#verify-email-addresses-procedure) for more details.
 
 ## Notes
 

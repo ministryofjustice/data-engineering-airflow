@@ -60,7 +60,7 @@ config:
       kubernetes
       mojap-airflow-tools==2.2.1
     smtp:
-      smtp_host: email-smtp.eu-west-1.amazonaws.com
+      smtp_host: email-smtp
       smtp_port: 587
       smtp_mail_from: dataengineering@digital.justice.gov.uk
   data-engineering-airflow:vpc:

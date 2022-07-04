@@ -11,7 +11,7 @@ from pulumi_aws.mwaa import (
 )
 from pulumi_aws.ses import EmailIdentity
 
-from .base import base_name, environment_name, mwaa_config, stack, tagger
+from .base import base_name, environment_name, mwaa_config, stack, tagger, region
 from .iam.role_policies import executionRolePolicy
 from .iam.roles import executionRole
 from .iam.smtp_user import access_key
@@ -20,11 +20,11 @@ from .vpc import private_subnets, securityGroup
 
 smtp_user = access_key.id
 smtp_password = access_key.ses_smtp_password_v4
-smtp_config = mwaa_config['smtp']
+smtp_config = mwaa_config["smtp"]
 
 ses_email = EmailIdentity(
     resource_name="data_engineering_email",
-    email="dataengineering@digital.justice.gov.uk",
+    email=smtp_config["smtp_mail_from"],
 )
 
 environment = Environment(
@@ -34,11 +34,11 @@ environment = Environment(
     environment_class=mwaa_config["environment_class"],
     execution_role_arn=executionRole.arn,
     airflow_configuration_options={
-        "smtp.smtp_host": smtp_config['smtp_host'],
-        "smtp.smtp_port": smtp_config['smtp_port'],
+        "smtp.smtp_host": f"{smtp_config['smtp_host']}.{region}.amazonaws.com",
+        "smtp.smtp_port": smtp_config["smtp_port"],
         "smtp.smtp_user": smtp_user,
         "smtp.smtp_password": smtp_password,
-        "smtp.smtp_mail_from": smtp_config['smtp_mail_from'],
+        "smtp.smtp_mail_from": smtp_config["smtp_mail_from"],
         "smtp.smtp_starttls": True,
     },
     logging_configuration=EnvironmentLoggingConfigurationArgs(
