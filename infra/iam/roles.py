@@ -1,4 +1,4 @@
-from pulumi.resource import ResourceOptions
+from pulumi import ResourceOptions
 from pulumi_aws.iam import (
     GetPolicyDocumentStatementArgs,
     GetPolicyDocumentStatementConditionArgs,

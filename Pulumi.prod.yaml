@@ -59,6 +59,7 @@ config:
       apache-airflow[cncf.kubernetes]
       kubernetes
       mojap-airflow-tools==2.2.1
+    smtp_mail_from: dataengineering@digital.justice.gov.uk
   data-engineering-airflow:vpc:
     cidr_block: 10.201.0.0/16
     transit_gateway:

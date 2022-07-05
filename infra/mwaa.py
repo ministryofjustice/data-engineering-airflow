@@ -9,12 +9,20 @@ from pulumi_aws.mwaa import (
     EnvironmentLoggingConfigurationWorkerLogsArgs,
     EnvironmentNetworkConfigurationArgs,
 )
+from pulumi_aws.ses import EmailIdentity
 
-from .base import base_name, environment_name, mwaa_config, stack, tagger
+from .base import base_name, environment_name, mwaa_config, stack, tagger, region
 from .iam.role_policies import executionRolePolicy
 from .iam.roles import executionRole
+from .iam.smtp_user import accessKey
 from .s3 import bucket, requirementsBucketObject
 from .vpc import private_subnets, securityGroup
+
+
+sesEmail = EmailIdentity(
+    resource_name="data_engineering_email",
+    email=mwaa_config["smtp_mail_from"],
+)
 
 environment = Environment(
     resource_name=base_name,
@@ -22,6 +30,14 @@ environment = Environment(
     dag_s3_path="dags",
     environment_class=mwaa_config["environment_class"],
     execution_role_arn=executionRole.arn,
+    airflow_configuration_options={
+        "smtp.smtp_host": f"email-smtp.{region}.amazonaws.com",
+        "smtp.smtp_port": 587,
+        "smtp.smtp_user": accessKey.id,
+        "smtp.smtp_password": accessKey.ses_smtp_password_v4,
+        "smtp.smtp_mail_from": mwaa_config["smtp_mail_from"],
+        "smtp.smtp_starttls": True,
+    },
     logging_configuration=EnvironmentLoggingConfigurationArgs(
         dag_processing_logs=EnvironmentLoggingConfigurationDagProcessingLogsArgs(
             enabled=True, log_level="INFO"
@@ -51,5 +67,5 @@ environment = Environment(
     requirements_s3_object_version=requirementsBucketObject.version_id,
     tags=tagger.create_tags(stack),
     webserver_access_mode="PUBLIC_ONLY",
-    opts=ResourceOptions(depends_on=[executionRolePolicy]),
+    opts=ResourceOptions(depends_on=[executionRolePolicy, sesEmail]),
 )
