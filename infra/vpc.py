@@ -13,6 +13,7 @@ from pulumi_aws.ec2 import (
     SecurityGroupRule,
     Subnet,
     Vpc,
+    VpnGateway,
 )
 from pulumi_aws.ec2transitgateway import TransitGateway, VpcAttachment
 
@@ -27,6 +28,12 @@ vpc = Vpc(
     enable_dns_support=True,
     enable_dns_hostnames=True,
     tags=tagger.create_tags(base_name),
+)
+
+vgw = VpnGateway(
+    resource_name=f"{base_name}-vgw",
+    vpc_id=vpc.id,
+    tags=tagger.create_tags(f"{base_name}-vgw"),
 )
 
 internetGateway = InternetGateway(
@@ -136,6 +143,7 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
     privateRouteTable = RouteTable(
         resource_name=f"{base_name}-private-{availability_zone}",
         vpc_id=vpc.id,
+        propagating_vgws=[vgw.id],
         tags=tagger.create_tags(f"{base_name}-private-{availability_zone}"),
         opts=ResourceOptions(parent=privateSubnet),
     )
@@ -191,3 +199,9 @@ flowLog = FlowLog(
     tags=tagger.create_tags(base_name),
     opts=ResourceOptions(parent=vpc),
 )
+
+# specifically for the HMCTS SDP <-> MoJAP connection
+# vgw = VpnGateway(
+#     resource_name=f"{base_name}-sdp-vgw",
+#     vpc_id=vpc.id,
+# )
