@@ -31,9 +31,9 @@ vpc = Vpc(
 )
 
 vpnGateway = VpnGateway(
-    resource_name=f"{base_name}-vgw",
+    resource_name=f"{base_name}-virtual-gateway",
     vpc_id=vpc.id,
-    tags=tagger.create_tags(f"{base_name}-vgw"),
+    tags=tagger.create_tags(base_name),
 )
 
 internetGateway = InternetGateway(
@@ -143,7 +143,7 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
     privateRouteTable = RouteTable(
         resource_name=f"{base_name}-private-{availability_zone}",
         vpc_id=vpc.id,
-        propagating_vgws=[vgw.id],
+        propagating_vgws=[vpnGateway.id],
         tags=tagger.create_tags(f"{base_name}-private-{availability_zone}"),
         opts=ResourceOptions(parent=privateSubnet),
     )
