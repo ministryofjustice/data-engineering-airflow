@@ -30,7 +30,7 @@ vpc = Vpc(
     tags=tagger.create_tags(base_name),
 )
 
-vgw = VpnGateway(
+vpnGateway = VpnGateway(
     resource_name=f"{base_name}-vgw",
     vpc_id=vpc.id,
     tags=tagger.create_tags(f"{base_name}-vgw"),
