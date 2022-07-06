@@ -35,6 +35,7 @@ vpnGateway = VpnGateway(
     resource_name=base_name,
     vpc_id=vpc.id,
     tags=tagger.create_tags(base_name),
+    opts=ResourceOptions(parent=vpc),
 )
 
 internetGateway = InternetGateway(
