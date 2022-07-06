@@ -32,7 +32,7 @@ vpc = Vpc(
 
 # this is called virtual private gateway in the control panel
 vpnGateway = VpnGateway(
-    resource_name=f"{base_name}-virtual-gateway",
+    resource_name=base_name,
     vpc_id=vpc.id,
     tags=tagger.create_tags(base_name),
 )
