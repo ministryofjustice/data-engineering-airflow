@@ -199,9 +199,3 @@ flowLog = FlowLog(
     tags=tagger.create_tags(base_name),
     opts=ResourceOptions(parent=vpc),
 )
-
-# specifically for the HMCTS SDP <-> MoJAP connection
-# vgw = VpnGateway(
-#     resource_name=f"{base_name}-sdp-vgw",
-#     vpc_id=vpc.id,
-# )
