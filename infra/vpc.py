@@ -30,6 +30,7 @@ vpc = Vpc(
     tags=tagger.create_tags(base_name),
 )
 
+# this is called virtual private gateway in the control panel
 vpnGateway = VpnGateway(
     resource_name=f"{base_name}-virtual-gateway",
     vpc_id=vpc.id,
@@ -199,3 +200,9 @@ flowLog = FlowLog(
     tags=tagger.create_tags(base_name),
     opts=ResourceOptions(parent=vpc),
 )
+
+# specifically for the HMCTS SDP <-> MoJAP connection
+# vgw = VpnGateway(
+#     resource_name=f"{base_name}-sdp-vgw",
+#     vpc_id=vpc.id,
+# )
