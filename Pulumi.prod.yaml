@@ -68,6 +68,8 @@ config:
       routes:
         - name: noms_live
           cidr_block: 10.40.0.0/18
+        - name: laa_prod
+          cidr_block: 10.205.0.0/20
     private_subnets:
       cidr_blocks:
         - 10.201.20.0/24
