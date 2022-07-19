@@ -2,7 +2,6 @@ import json
 
 from infra.utils import prepare_kube_config
 
-
 def test_prepare_kube_config():
     output = prepare_kube_config(
         kube_config={
