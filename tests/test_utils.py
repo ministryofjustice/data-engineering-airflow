@@ -1,5 +1,6 @@
-from infra.utils import prepare_kube_config
 import json
+
+from infra.utils import prepare_kube_config
 
 
 def test_prepare_kube_config():

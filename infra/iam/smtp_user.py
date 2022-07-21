@@ -1,12 +1,12 @@
+from pulumi.resource import ResourceOptions
 from pulumi_aws.iam import (
     AccessKey,
-    get_policy_document,
     GetPolicyDocumentStatementArgs,
     Policy,
     User,
     UserPolicyAttachment,
+    get_policy_document,
 )
-from pulumi.resource import ResourceOptions
 
 from ..base import base_name, tagger
 

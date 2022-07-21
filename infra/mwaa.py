@@ -11,13 +11,12 @@ from pulumi_aws.mwaa import (
 )
 from pulumi_aws.ses import EmailIdentity
 
-from .base import base_name, environment_name, mwaa_config, stack, tagger, region
+from .base import base_name, environment_name, mwaa_config, region, stack, tagger
 from .iam.role_policies import executionRolePolicy
 from .iam.roles import executionRole
 from .iam.smtp_user import accessKey
 from .s3 import bucket, requirementsBucketObject
 from .vpc import private_subnets, securityGroup
-
 
 sesEmail = EmailIdentity(
     resource_name="data_engineering_email",
