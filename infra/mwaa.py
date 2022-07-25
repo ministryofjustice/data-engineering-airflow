@@ -20,6 +20,7 @@ from .vpc import private_subnets, securityGroup
 
 sesEmail = EmailIdentity(
     resource_name="data_engineering_email",
+
     email=mwaa_config["smtp_mail_from"],
 )
 
