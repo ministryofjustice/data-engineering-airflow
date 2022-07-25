@@ -7,10 +7,10 @@ APPLY_FIXES: all # all, none, or list of linter keys
 SHOW_ELAPSED_TIME: true
 FILEIO_REPORTER: false
 # DISABLE_ERRORS: true # Uncomment if you want MegaLinter to detect errors but not block CI to pass
-DISABLE_LINTERS: 
-  - ACTION_ACTIONLINT
+DISABLE_LINTERS:
   - PYTHON_PYLINT
   - PYTHON_BANDIT
   - PYTHON_MYPY
   - REPOSITORY_SEMGREP
   - SPELL_CSPELL
+ACTION_ACTIONLINT_ARGUMENTS: -ignore "SC2086"
