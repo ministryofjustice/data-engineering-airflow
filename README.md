@@ -1,5 +1,7 @@
 # Data Engineering Airflow
 
+[![GitHub Super-Linter](https://github.com/ministryofjustice/data-engineering-airflow/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
+
 This repository defines all the infrastructure required to create:
 
 - an Airflow environment (using
@@ -122,27 +124,26 @@ affinity:
 
 To deploy or update an environment:
 
-1.  Create an AWS Vault session with the `restricted-admin@data-engineering`
-    role:
+1. Create an AWS Vault session with the `restricted-admin@data-engineering`
+   role:
 
-    ```zsh
-    aws-vault exec -d 12h restricted-admin@data-engineering
-    ```
+   ```zsh
+   aws-vault exec -d 12h restricted-admin@data-engineering
+   ```
 
-2.  Select the relevant stack, for example, `dev`:
+2. Select the relevant stack, for example, `dev`:
 
-    ```zsh
-    pulumi stack select dev
-    ```
+   ```zsh
+   pulumi stack select dev
+   ```
 
-3.  Update the stack:
+3. Update the stack:
 
-    ```zsh
-    pulumi up --refresh
-    ```
+   ```zsh
+   pulumi up --refresh
+   ```
 
-    If you get an error message during the update, try to run the update again
-    before debugging.
+If you get an error message during the update, try to run the update again before debugging.
 
 ### How to upgrade the Kubernetes version
 
