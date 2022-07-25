@@ -1,8 +1,4 @@
-from pulumi_aws.iam import (
-    GetPolicyDocumentStatementArgs,
-    Policy,
-    get_policy_document,
-)
+from pulumi_aws.iam import GetPolicyDocumentStatementArgs, Policy, get_policy_document
 
 from ..base import account_id, base_name, environment_name, region, tagger
 
