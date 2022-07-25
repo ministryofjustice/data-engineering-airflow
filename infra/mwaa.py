@@ -27,6 +27,7 @@ sesEmail = EmailIdentity(
 environment = Environment(
     resource_name=base_name,
     airflow_version=mwaa_config["airflow_version"],
+
     dag_s3_path="dags",
     environment_class=mwaa_config["environment_class"],
     execution_role_arn=executionRole.arn,
