@@ -1,9 +1,9 @@
 import pulumi_kubernetes as k8s
-from pulumi import ResourceOptions
+from pulumi import Alias, ResourceOptions
 
 from ..base import eks_config, region
-from .cluster import cluster
 from ..iam.roles import clusterAutoscalerRole
+from .cluster import cluster, cluster_provider
 
 cluster_autoscaler_namespace = k8s.core.v1.Namespace(
     resource_name="cluster-autoscaler-system",
@@ -15,7 +15,9 @@ cluster_autoscaler_namespace = k8s.core.v1.Namespace(
             )
         },
     ),
-    opts=ResourceOptions(provider=cluster.provider, parent=cluster),
+    opts=ResourceOptions(
+        provider=cluster_provider, delete_before_replace=True, parent=cluster
+    ),
 )
 
 clusterAutoscaler = k8s.helm.v3.Release(
@@ -39,7 +41,9 @@ clusterAutoscaler = k8s.helm.v3.Release(
     },
     version=eks_config["cluster_autoscaler"]["chart_version"],
     opts=ResourceOptions(
-        provider=cluster.provider,
-        parent=cluster,
+        provider=cluster_provider,
+        delete_before_replace=True,
+        parent=cluster_autoscaler_namespace,
+        aliases=[Alias(parent=cluster)],
     ),
 )

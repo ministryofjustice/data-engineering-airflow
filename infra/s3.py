@@ -1,3 +1,5 @@
+import json
+
 from data_engineering_pulumi_components.aws import Bucket
 from pulumi import ResourceOptions
 from pulumi_aws.s3 import BucketObject, BucketPolicy
@@ -5,8 +7,6 @@ from pulumi_aws.s3 import BucketObject, BucketPolicy
 from .base import base_name, mwaa_config, tagger
 from .eks.cluster import cluster
 from .utils import prepare_kube_config
-
-import json
 
 bucket = Bucket(name=f"mojap-{base_name}", tagger=tagger, versioning={"enabled": True})
 

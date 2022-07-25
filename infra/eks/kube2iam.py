@@ -1,9 +1,9 @@
 import pulumi_kubernetes as k8s
-from pulumi.resource import ResourceOptions
+from pulumi.resource import Alias, ResourceOptions
 
 from ..base import eks_config, region
 from ..iam.roles import defaultRole, instanceRole
-from .cluster import cluster
+from .cluster import cluster, cluster_provider
 
 kube2iam_namespace = k8s.core.v1.Namespace(
     resource_name="kube2iam-system",
@@ -11,7 +11,9 @@ kube2iam_namespace = k8s.core.v1.Namespace(
         name="kube2iam-system",
         annotations={"iam.amazonaws.com/allowed-roles": '["*"]'},
     ),
-    opts=ResourceOptions(provider=cluster.provider, parent=cluster),
+    opts=ResourceOptions(
+        provider=cluster_provider, delete_before_replace=True, parent=cluster
+    ),
 )
 
 kube2iam = k8s.helm.v3.Release(
@@ -35,10 +37,13 @@ kube2iam = k8s.helm.v3.Release(
             "namespace-restrictions": True,
         },
         "host": {"iptables": True, "interface": "eni+"},
+        "tolerations": [{"operator": "Exists"}],
     },
     version=eks_config["kube2iam"]["chart_version"],
     opts=ResourceOptions(
-        provider=cluster.provider,
-        parent=cluster,
+        provider=cluster_provider,
+        delete_before_replace=True,
+        parent=kube2iam_namespace,
+        aliases=[Alias(parent=cluster)],
     ),
 )

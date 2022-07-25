@@ -5,29 +5,30 @@ config:
   aws:region: eu-west-1
   data-engineering-airflow:eks:
     cluster:
-      kubernetes_version: "1.21"
+      kubernetes_version: "1.22"
       node_groups:
         - name: standard
-          ami_release_version: 1.21.5-20220216
+          ami_release_version: 1.22.9-20220610
           instance_types:
-            - t3a.small
-            - t3.small
-            - t2.small
+            - t3a.large
+            - t3.large
+            - t2.large
           scaling_config:
             desired_size: 2
-            max_size: 5
-            min_size: 1
+            max_size: 10
+            min_size: 0
+          disk_size: 150
         - name: high-memory
-          ami_type: AL2_ARM_64
-          ami_release_version: 1.21.5-20220216
+          ami_release_version: 1.22.9-20220610
           instance_types:
-            - r6g.medium
+            - r6i.4xlarge
           labels:
             high-memory: "true"
           scaling_config:
             desired_size: 0
             max_size: 5
             min_size: 0
+          disk_size: 150
           taints:
             - effect: NO_SCHEDULE
               key: high-memory
@@ -37,8 +38,11 @@ config:
           - arn:aws:iam::593291632749:role/restricted-admin
           - arn:aws:iam::189157455002:role/restricted-admin
           - arn:aws:iam::042130406152:role/github-actions-runner
+      vpc_cni:
+        image_version: 1.11.2
+        image_account_id: 602401143452
     cluster_autoscaler:
-      chart_version: 9.10.7
+      chart_version: 9.19.1
     gatekeeper:
       chart_version: 3.6.0
     kube2iam:
@@ -46,13 +50,14 @@ config:
   data-engineering-airflow:mwaa:
     airflow_version: 2.2.2
     environment_class: mw1.small
-    max_workers: 1
+    max_workers: 2
     min_workers: 1
     requirements: |
       --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.2.2/constraints-3.7.txt"
       apache-airflow[cncf.kubernetes]
       kubernetes
-      mojap-airflow-tools==2.1.3
+      mojap-airflow-tools==2.2.1
+    smtp_mail_from: dataengineering@digital.justice.gov.uk
   data-engineering-airflow:vpc:
     cidr_block: 10.200.0.0/16
     transit_gateway:
@@ -71,4 +76,3 @@ config:
         - 10.200.10.0/24
         - 10.200.11.0/24
         - 10.200.12.0/24
-        

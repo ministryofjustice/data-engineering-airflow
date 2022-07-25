@@ -12,21 +12,30 @@ To work with this repository, you must have the following installed:
 
 - [Python 3.9 or later](https://www.python.org/downloads/)
 - [Pulumi](https://www.pulumi.com/docs/get-started/install/)
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+- [Kubectl](https://kubernetes.io/docs/tasks/tools/#install-kubectl)
+- [Node.js](https://nodejs.org/en/download/)
 
 You should also:
 
-1.  Create a virtual environment:
+1. Create a virtual environment:
 
-        python -m venv venv
+   ```zsh
+   python -m venv venv
+   ```
 
-2.  Activate the environment:
+2. Activate the environment:
 
-        source venv/bin/activate
+   ```zsh
+   source venv/bin/activate
+   ```
 
-3.  Install dependencies:
+3. Install dependencies:
 
-        pip install -r requirements.txt
-        pip install -r requirements-dev.txt
+   ```zsh
+   pip install -r requirements.txt
+   pip install -r requirements-dev.txt
+   ```
 
 ## Structure
 
@@ -116,17 +125,25 @@ To deploy or update an environment:
 1.  Create an AWS Vault session with the `restricted-admin@data-engineering`
     role:
 
-         aws-vault exec -d 12h restricted-admin@data-engineering
+    ```zsh
+    aws-vault exec -d 12h restricted-admin@data-engineering
+    ```
 
 2.  Select the relevant stack, for example, `dev`:
 
-        pulumi stack select dev
+    ```zsh
+    pulumi stack select dev
+    ```
 
 3.  Update the stack:
 
-        pulumi up --refresh
+    ```zsh
+    pulumi up --refresh
+    ```
 
-    If you get an error message about helm not being able to create resources, ignore and try to pulumi up again.
+    If you get an error message during the update, try to run the update again
+    before debugging.
+
 ### How to upgrade the Kubernetes version
 
 For all available Kubernetes versions, see the
@@ -151,16 +168,39 @@ The AMI release version should match the Kubernetes version. For example, if the
 Kubernetes version is `1.20`, you should specify an AMI release version with the
 tag `1.20.*-*`.
 
+### How to upgrade the VPC CNI version
+
+For all available VPC CNI versions see the [GitHub releases](https://github.com/aws/amazon-vpc-cni-k8s/releases).
+
+To upgrade the VPC CNI version, change the value of the
+`eks.cluster.vpc_cni_version` field in the relevant Pulumi stack config.
+
 ### How to run tests
 
 To run tests manually, run:
 
-    python -m pytest tests/
+```zsh
+python -m pytest tests/
+```
 
-### How to attach alpha_users to the airflow UI Access policy
+### How to attach Airflow UI access policy to user roles
 
-Please run the following, amking sure to exec into the restricted-admin role in the data account first:
-    python scripts/attach_role_policies.py
+The Airflow UI access policy is automatically attached to all new users of the
+Analytical Platform via the Control Panel, so you should not normally need to
+run this script.
+
+To manually attach the policy to all users, assume the restricted admin role in
+the data account and run:
+
+```zsh
+python scripts/attach_role_policies.py
+```
+
+## Email Notifications
+
+We use Amazon Simple Email Service (SES) for email notifications.
+
+We use `dataengineering@digital.justice.gov.uk` as the "from" email address. This email address has been added as a verified identity to the data account without assigning a default configuration set. See [verify-email-addresses-procedure](https://docs.aws.amazon.com/ses/latest/dg/creating-identities.html#verify-email-addresses-procedure) for more details.
 
 ## Notes
 
@@ -176,13 +216,19 @@ This could lead to a situation where untagged EC2 instances are created between
 the time at which the managed node group (and autoscaling group) are created and
 the tags are added to the autoscaling group.
 
-When creating a stack from new, you might need to run pulumi up multiple times because pulumi is unable
-to detect that resources were successfully created using helm.
+When creating a stack from new, you might need to run `pulumi` up multiple times
+because Pulumi is unable to detect that resources were successfully created.
+Simply ignore the error message and try to `pulumi up` again. You might also
+need to refresh the pulumi stack. Only debug if the pulumi up fails again with
+the same error message. Hence it is better to pulumi up locally first, and use
+the `pulumi up` GitHub Action as a confirmation that the change has been
+completed.
 
-When creating a stack from new, the transit gateway attachment status will show as "Pending Acceptance" 
-and pulumi will fail to create the routes to the TGW. You will need to request the DSO team to accept 
-the transit gateway attachment. Once the state changes to "Available", you can run pulumi up again to 
-create the routes to the TGW.
+When creating a stack from new, the Transit Gateway (TGW) attachment status will
+show as "Pending Acceptance" and Pulumi will fail to create the routes to the
+TGW. You will need to request the DSO team to accept the TGW attachment. Once
+the state changes to "Available", you can run `pulumi up` again to create the
+routes to the TGW.
 
 ## Reference
 
