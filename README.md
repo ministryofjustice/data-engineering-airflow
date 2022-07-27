@@ -122,20 +122,20 @@ affinity:
 
 To deploy or update an environment:
 
-1.  Create an AWS Vault session with the `restricted-admin@data-engineering`
+1. Create an AWS Vault session with the `restricted-admin@data-engineering`
     role:
 
     ```zsh
     aws-vault exec -d 12h restricted-admin@data-engineering
     ```
 
-2.  Select the relevant stack, for example, `dev`:
+2. Select the relevant stack, for example, `dev`:
 
     ```zsh
     pulumi stack select dev
     ```
 
-3.  Update the stack:
+3. Update the stack:
 
     ```zsh
     pulumi up --refresh
