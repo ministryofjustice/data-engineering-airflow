@@ -73,15 +73,10 @@ clusterAutoscalerRole = Role(
                 principals=[
                     GetPolicyDocumentStatementPrincipalArgs(
                         identifiers=["ec2.amazonaws.com"], type="Service"
-                    )
-                ],
-                actions=["sts:AssumeRole"],
-            ),
-            GetPolicyDocumentStatementArgs(
-                principals=[
+                    ),
                     GetPolicyDocumentStatementPrincipalArgs(
                         identifiers=[instanceRole.arn], type="AWS"
-                    )
+                    ),
                 ],
                 actions=["sts:AssumeRole"],
             ),
