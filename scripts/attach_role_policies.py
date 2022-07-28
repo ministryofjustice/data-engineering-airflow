@@ -16,7 +16,7 @@ for item in response_iterator:
         [
             role["RoleName"]
             for role in item["Roles"]
-            
+
             if role["RoleName"].startswith("alpha_user_")
         ]
     )
