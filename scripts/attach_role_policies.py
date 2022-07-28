@@ -7,7 +7,6 @@
 import boto3
 
 client = boto3.client("iam")
-
 paginator = client.get_paginator("list_roles")
 response_iterator = paginator.paginate()
 
@@ -17,6 +16,7 @@ for item in response_iterator:
         [
             role["RoleName"]
             for role in item["Roles"]
+            
             if role["RoleName"].startswith("alpha_user_")
         ]
     )
