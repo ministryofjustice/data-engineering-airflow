@@ -196,6 +196,16 @@ the data account and run:
 python scripts/attach_role_policies.py
 ```
 
+### How to lint/format
+
+We use the https://oxsecurity.github.io/megalinter/latest/ to lint and format
+
+To lint/format locally `docker run -v $(pwd)":/tmp/lint:rw" oxsecurity/megalinter-python:v6`
+
+To lint/format using CI use the github action /.github/worflows/lint.yaml
+
+To apply linting configurations save to /.github/linters
+
 ## Email Notifications
 
 We use Amazon Simple Email Service (SES) for email notifications.

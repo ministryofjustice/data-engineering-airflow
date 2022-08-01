@@ -1,42 +1,29 @@
-name: Lint
+name: MegaLinter
+
 on:
-  - pull_request
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
-  lint:
-    name: Lint
+  build:
+    name: MegaLinter
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.9]
     steps:
-      - uses: actions/checkout@v3
+      # Git Checkout
+      - name: Checkout Code
+        uses: actions/checkout@v3
         with:
-          fetch-depth: 1
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Check for flake8 config
-        run: |
-          if [ -e ./.flake8 ]; then
-              echo "A .flake8 config file has been found in the root of this branch and will be used in this workflow."
-          else
-              echo "No .flake8 config file has been found in the root of this branch and so the standard Data Engineering config will used."
-              curl https://moj-analytical-services.github.io/.github/configs/data-engineering/flake8 > .flake8
-          fi
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
-      - name: Lint Python files with flake8
-        run: >
-          flake8 .
-      - name: Lint YAML files with yamllint
-        run: >
-          yamllint .
-      - name: Check that isort would not make any changes to imports
-        run: >
-          isort . --check-only --profile black
-      - name: Check that Black would not make any changes to python files
-        run: >
-          black . --check
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      # MegaLinter
+      - name: MegaLinter
+        id: ml
+        uses: oxsecurity/megalinter/flavors/python@v6
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
