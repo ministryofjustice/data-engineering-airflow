@@ -122,20 +122,20 @@ affinity:
 
 To deploy or update an environment:
 
-1.  Create an AWS Vault session with the `restricted-admin@data-engineering`
+1. Create an AWS Vault session with the `restricted-admin@data-engineering`
     role:
 
     ```zsh
     aws-vault exec -d 12h restricted-admin@data-engineering
     ```
 
-2.  Select the relevant stack, for example, `dev`:
+2. Select the relevant stack, for example, `dev`:
 
     ```zsh
     pulumi stack select dev
     ```
 
-3.  Update the stack:
+3. Update the stack:
 
     ```zsh
     pulumi up --refresh
@@ -198,13 +198,13 @@ python scripts/attach_role_policies.py
 
 ### How to lint/format
 
-We use the https://oxsecurity.github.io/megalinter/latest/ to lint and format
+We use <https://oxsecurity.github.io/megalinter/latest/> to lint and format:
 
-To lint/format locally `docker run -v $(pwd)":/tmp/lint:rw" oxsecurity/megalinter-python:v6`
+- To lint/format locally run `docker run -v $(pwd)":/tmp/lint:rw" oxsecurity/megalinter-python:v6`. The local Megalinter is configured to lint and format changed files with respect to main. It also disables [Actionlint](https://oxsecurity.github.io/megalinter/latest/descriptors/action_actionlint/) because of a [bug](https://github.com/rhysd/actionlint/issues/153).
 
-To lint/format using CI use the github action /.github/worflows/lint.yaml
+- To lint/format using CI use the github action /.github/workflows/mega-linter.yaml. The CI Megalinter is configured to lint changed files only with respect to main.
 
-To apply linting configurations save to /.github/linters
+- To apply/modify linting configurations save configuration files to /.github/linters.
 
 ## Email Notifications
 
