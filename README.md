@@ -204,7 +204,13 @@ We use <https://oxsecurity.github.io/megalinter/latest/> to lint and format:
 
 - To lint/format using CI use the github action /.github/workflows/mega-linter.yaml. The CI Megalinter is configured to lint changed files only with respect to main.
 
+- You may wish to install megalinter locally instead of using docker `npm install mega-linter-runner -g`. In that case you can run the megalinter using simply `mega-linter-runner`
+
 - To apply/modify linting configurations save configuration files to /.github/linters.
+
+### Githooks
+
+This repo comes with some githooks to make standard checks before you commit files to Github. See [Githooks](https://github.com/moj-analytical-services/data-engineering-template#githooks) for more details.
 
 ## Email Notifications
 
