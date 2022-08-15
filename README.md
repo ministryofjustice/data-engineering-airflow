@@ -122,20 +122,20 @@ affinity:
 
 To deploy or update an environment:
 
-1.  Create an AWS Vault session with the `restricted-admin@data-engineering`
+1. Create an AWS Vault session with the `restricted-admin@data-engineering`
     role:
 
     ```zsh
     aws-vault exec -d 12h restricted-admin@data-engineering
     ```
 
-2.  Select the relevant stack, for example, `dev`:
+2. Select the relevant stack, for example, `dev`:
 
     ```zsh
     pulumi stack select dev
     ```
 
-3.  Update the stack:
+3. Update the stack:
 
     ```zsh
     pulumi up --refresh
@@ -195,6 +195,22 @@ the data account and run:
 ```zsh
 python scripts/attach_role_policies.py
 ```
+
+### How to lint/format
+
+We use <https://oxsecurity.github.io/megalinter/latest/> to lint and format:
+
+- To lint/format locally run `docker run -v $(pwd)":/tmp/lint:rw" oxsecurity/megalinter-python:v6`. The local Megalinter is configured to lint and format changed files with respect to main. It also disables [Actionlint](https://oxsecurity.github.io/megalinter/latest/descriptors/action_actionlint/) because of a [bug](https://github.com/rhysd/actionlint/issues/153).
+
+- To lint/format using CI use the github action /.github/workflows/mega-linter.yaml. The CI Megalinter is configured to lint changed files only with respect to main.
+
+- You may wish to install megalinter locally instead of using docker `npm install mega-linter-runner -g`. In that case you can run the megalinter using simply `mega-linter-runner`
+
+- To apply/modify linting configurations save configuration files to /.github/linters.
+
+### Githooks
+
+This repo comes with some githooks to make standard checks before you commit files to Github. See [Githooks](https://github.com/moj-analytical-services/data-engineering-template#githooks) for more details.
 
 ## Email Notifications
 

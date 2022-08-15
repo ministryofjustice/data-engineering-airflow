@@ -1,0 +1,5 @@
+{
+  "checks": {
+    "lexical_illusions.misc": false
+  }
+}

@@ -1,5 +1,1 @@
-black
-flake8
 pytest
-yamllint
-isort
