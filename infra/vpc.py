@@ -1,4 +1,4 @@
-from pulumi import Alias, ResourceOptions
+from pulumi import ResourceOptions
 from pulumi_aws import get_availability_zones
 from pulumi_aws.cloudwatch import LogGroup
 from pulumi_aws.ec2 import (
