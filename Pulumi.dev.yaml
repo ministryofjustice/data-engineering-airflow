@@ -60,12 +60,14 @@ config:
     smtp_mail_from: dataengineering@digital.justice.gov.uk
   data-engineering-airflow:vpc:
     cidr_block: 10.200.0.0/16
-    transit_gateway:
-      name: moj
-      id: tgw-009e14703041026a5
-      routes:
-        - name: noms_live
-          cidr_block: 10.40.0.0/18
+    transit_gateways:
+      - name: cloud-platform
+        id: tgw-009e14703041026a5
+        routes:
+          - name: noms-live
+            cidr_block: 10.40.0.0/18
+      - name: moj
+        id: tgw-0e7b982ea47c28fba
     private_subnets:
       cidr_blocks:
         - 10.200.20.0/24

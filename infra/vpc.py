@@ -1,4 +1,4 @@
-from pulumi import ResourceOptions
+from pulumi import Alias, ResourceOptions
 from pulumi_aws import get_availability_zones
 from pulumi_aws.cloudwatch import LogGroup
 from pulumi_aws.ec2 import (
@@ -22,6 +22,9 @@ from .iam.roles import flowLogRole
 
 vpc_config = config.require_object("vpc")
 
+available = get_availability_zones(state="available")
+availability_zones = available.names
+
 vpc = Vpc(
     resource_name=base_name,
     cidr_block=vpc_config["cidr_block"],
@@ -43,11 +46,6 @@ internetGateway = InternetGateway(
     tags=tagger.create_tags(base_name),
     vpc_id=vpc.id,
     opts=ResourceOptions(parent=vpc),
-)
-
-transitGateway = TransitGateway.get(
-    resource_name=vpc_config["transit_gateway"]["name"],
-    id=vpc_config["transit_gateway"]["id"],
 )
 
 publicRouteTable = RouteTable(
@@ -91,13 +89,12 @@ egressRule = SecurityGroupRule(
     opts=ResourceOptions(parent=securityGroup),
 )
 
-available = get_availability_zones(state="available")
-
 public_subnets = []
 private_subnets = []
+private_route_tables = []
 
 for availability_zone, public_cidr_block, private_cidr_block in zip(
-    available.names,
+    availability_zones,
     vpc_config["public_subnets"]["cidr_blocks"],
     vpc_config["private_subnets"]["cidr_blocks"],
 ):
@@ -149,6 +146,7 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
         tags=tagger.create_tags(f"{base_name}-private-{availability_zone}"),
         opts=ResourceOptions(parent=privateSubnet),
     )
+    private_route_tables.append(privateRouteTable)
     defaultPrivateRoute = Route(
         resource_name=f"{base_name}-private-{availability_zone}",
         destination_cidr_block="0.0.0.0/0",
@@ -162,10 +160,33 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
         subnet_id=privateSubnet.id,
         opts=ResourceOptions(parent=privateRouteTable),
     )
-    if vpc_config["transit_gateway"].get("routes"):
-        for route in vpc_config["transit_gateway"]["routes"]:
+
+for transit_gateway in vpc_config.get("transit_gateways", []):
+    transitGateway = TransitGateway.get(
+        resource_name=f"{base_name}-{transit_gateway['name']}",
+        id=transit_gateway["id"],
+    )
+    transitGatewayVpcAttachment = VpcAttachment(
+        resource_name=f"{base_name}-{transit_gateway['name']}",
+        dns_support="enable",
+        subnet_ids=[private_subnet.id for private_subnet in private_subnets],
+        transit_gateway_default_route_table_association=True,
+        transit_gateway_default_route_table_propagation=True,
+        transit_gateway_id=transitGateway.id,
+        vpc_id=vpc.id,
+        tags=tagger.create_tags(f"{base_name}-{transit_gateway['name']}"),
+        opts=ResourceOptions(
+            depends_on=[transitGateway].extend(private_subnets), parent=vpc
+        ),
+    )
+    for availability_zone, privateRouteTable in zip(
+        availability_zones, private_route_tables
+    ):
+        for route in transit_gateway.get("routes", []):
             transitGatewayPrivateRoute = Route(
-                resource_name=f"{base_name}-private-{availability_zone}-{route['name']}",
+                resource_name="{}-private-{}-{}-{}".format(
+                    base_name, availability_zone, transit_gateway["name"], route["name"]
+                ),
                 destination_cidr_block=route["cidr_block"],
                 transit_gateway_id=transitGateway.id,
                 route_table_id=privateRouteTable.id,
@@ -173,20 +194,6 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
                     depends_on=transitGateway, parent=privateRouteTable
                 ),
             )
-
-transitGatewayVpcAttachment = VpcAttachment(
-    resource_name=base_name,
-    dns_support="enable",
-    subnet_ids=[private_subnet.id for private_subnet in private_subnets],
-    transit_gateway_default_route_table_association=True,
-    transit_gateway_default_route_table_propagation=True,
-    transit_gateway_id=transitGateway.id,
-    vpc_id=vpc.id,
-    tags=tagger.create_tags(base_name),
-    opts=ResourceOptions(
-        depends_on=[transitGateway].extend(private_subnets), parent=vpc
-    ),
-)
 
 flowLogGroup = LogGroup(
     resource_name=f"{base_name}-vpc-flow-log",
