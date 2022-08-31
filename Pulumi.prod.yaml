@@ -5,10 +5,10 @@ config:
   aws:region: eu-west-1
   data-engineering-airflow:eks:
     cluster:
-      kubernetes_version: "1.22"
+      kubernetes_version: "1.23"
       node_groups:
         - name: standard
-          ami_release_version: 1.22.9-20220610
+          ami_release_version: 1.23.9-20220824
           capacity_type: ON_DEMAND
           instance_types:
             - t3a.large
@@ -20,7 +20,7 @@ config:
             min_size: 1
           disk_size: 150
         - name: high-memory
-          ami_release_version: 1.22.9-20220610
+          ami_release_version: 1.23.9-20220824
           capacity_type: ON_DEMAND
           instance_types:
             - r6i.4xlarge
