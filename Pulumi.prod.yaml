@@ -44,7 +44,7 @@ config:
         image_version: 1.11.3
         image_account_id: 602401143452
     cluster_autoscaler:
-      chart_version: 9.19.1
+      chart_version: 9.20.1
     gatekeeper:
       chart_version: 3.6.0
     kube2iam:
