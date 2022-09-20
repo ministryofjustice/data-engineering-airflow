@@ -5,10 +5,10 @@ config:
   aws:region: eu-west-1
   data-engineering-airflow:eks:
     cluster:
-      kubernetes_version: "1.22"
+      kubernetes_version: "1.23"
       node_groups:
         - name: standard
-          ami_release_version: 1.22.9-20220610
+          ami_release_version: 1.23.9-20220824
           instance_types:
             - t3a.large
             - t3.large
@@ -19,7 +19,7 @@ config:
             min_size: 0
           disk_size: 150
         - name: high-memory
-          ami_release_version: 1.22.9-20220610
+          ami_release_version: 1.23.9-20220824
           instance_types:
             - r6i.4xlarge
           labels:
@@ -39,12 +39,12 @@ config:
           - arn:aws:iam::189157455002:role/restricted-admin
           - arn:aws:iam::042130406152:role/github-actions-runner
       vpc_cni:
-        image_version: 1.11.2
+        image_version: 1.11.3
         image_account_id: 602401143452
     cluster_autoscaler:
-      chart_version: 9.19.1
+      chart_version: 9.20.1
     gatekeeper:
-      chart_version: 3.6.0
+      chart_version: 3.9.0
     kube2iam:
       chart_version: 2.6.0
   data-engineering-airflow:mwaa:

@@ -123,26 +123,26 @@ affinity:
 To deploy or update an environment:
 
 1. Create an AWS Vault session with the `restricted-admin@data-engineering`
-    role:
+   role:
 
-    ```zsh
-    aws-vault exec -d 12h restricted-admin@data-engineering
-    ```
+   ```zsh
+   aws-vault exec -d 12h restricted-admin@data-engineering
+   ```
 
 2. Select the relevant stack, for example, `dev`:
 
-    ```zsh
-    pulumi stack select dev
-    ```
+   ```zsh
+   pulumi stack select dev
+   ```
 
 3. Update the stack:
 
-    ```zsh
-    pulumi up --refresh
-    ```
+   ```zsh
+   pulumi up --refresh
+   ```
 
-    If you get an error message during the update, try to run the update again
-    before debugging.
+   If you get an error message during the update, try to run the update again
+   before debugging.
 
 ### How to upgrade the Kubernetes version
 
@@ -174,6 +174,42 @@ For all available VPC CNI versions see the [GitHub releases](https://github.com/
 
 To upgrade the VPC CNI version, change the value of the
 `eks.cluster.vpc_cni_version` field in the relevant Pulumi stack config.
+
+### How to upgrade the cluster autoscaler version
+
+For all available chart versions, run:
+
+```zsh
+helm repo add autoscaler https://kubernetes.github.io/autoscaler
+helm search repo autoscaler/cluster-autoscaler --versions
+```
+
+To upgrade the cluster autoscaler version, change the value of the
+`eks.cluster_autoscaler.chart_version` field in the relevant Pulumi stack config.
+
+### How to upgrade the Gatekeeper version
+
+For all available chart versions, run:
+
+```zsh
+helm repo add gatekeeper https://open-policy-agent.github.io/gatekeeper/charts
+helm search repo gatekeeper/gatekeeper --versions
+```
+
+To upgrade the Gatekeeper version, change the value of the
+`eks.gatekeeper.chart_version` field in the relevant Pulumi stack config.
+
+### How to upgrade the kube2iam version
+
+For all available chart versions, run:
+
+```zsh
+helm repo add kube2iam https://jtblin.github.io/kube2iam/
+helm search repo kube2iam/kube2iam --versions
+```
+
+To upgrade the kube2iam version, change the value of the `eks.kube2iam.chart_version`
+field in the relevant Pulumi stack config.
 
 ### How to run tests
 
