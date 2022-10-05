@@ -1,0 +1,5 @@
+#!/bin/sh
+#
+# commit without checks by adding --no-verify to your commit command
+
+docker run -v $(pwd)":/tmp/lint:rw" oxsecurity/megalinter-python:v6

@@ -1,5 +1,5 @@
-data-engineering-pulumi-components>=0.1.0.dev2,<1.0.0
-pulumi>=3.0.0,<3.23.0
-pulumi-aws>=4.0.0,<5.0.0
+data-engineering-pulumi-components>=0.4.0.dev1,<1.0.0
+pulumi>=3.0.0,<4.0.0
+pulumi-aws>=5.0.0,<6.0.0
 pulumi-eks>=0.30.0,<1.0.0
 pulumi-kubernetes>=3.7.0,<=4.0.0

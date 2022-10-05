@@ -1,6 +1,9 @@
 from pulumi import ResourceOptions
+from pulumi_aws import get_availability_zones
+from pulumi_aws.cloudwatch import LogGroup
 from pulumi_aws.ec2 import (
     Eip,
+    FlowLog,
     InternetGateway,
     NatGateway,
     Route,
@@ -10,11 +13,17 @@ from pulumi_aws.ec2 import (
     SecurityGroupRule,
     Subnet,
     Vpc,
+    VpnGateway,
 )
-from pulumi_aws import get_availability_zones
-from .base import tagger, config, base_name
+from pulumi_aws.ec2transitgateway import TransitGateway, VpcAttachment
+
+from .base import base_name, config, tagger
+from .iam.roles import flowLogRole
 
 vpc_config = config.require_object("vpc")
+
+available = get_availability_zones(state="available")
+availability_zones = available.names
 
 vpc = Vpc(
     resource_name=base_name,
@@ -22,6 +31,14 @@ vpc = Vpc(
     enable_dns_support=True,
     enable_dns_hostnames=True,
     tags=tagger.create_tags(base_name),
+)
+
+# this is called virtual private gateway in the control panel
+vpnGateway = VpnGateway(
+    resource_name=base_name,
+    vpc_id=vpc.id,
+    tags=tagger.create_tags(base_name),
+    opts=ResourceOptions(parent=vpc),
 )
 
 internetGateway = InternetGateway(
@@ -72,13 +89,12 @@ egressRule = SecurityGroupRule(
     opts=ResourceOptions(parent=securityGroup),
 )
 
-available = get_availability_zones(state="available")
-
 public_subnets = []
 private_subnets = []
+private_route_tables = []
 
 for availability_zone, public_cidr_block, private_cidr_block in zip(
-    available.names,
+    availability_zones,
     vpc_config["public_subnets"]["cidr_blocks"],
     vpc_config["private_subnets"]["cidr_blocks"],
 ):
@@ -106,7 +122,9 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
         resource_name=f"{base_name}-{availability_zone}",
         vpc=True,
         tags=tagger.create_tags(f"{base_name}-{availability_zone}"),
-        opts=ResourceOptions(depends_on=[internetGateway], parent=internetGateway),
+        opts=ResourceOptions(
+            depends_on=[internetGateway], parent=internetGateway, protect=True
+        ),
     )
     natGateway = NatGateway(
         resource_name=f"{base_name}-{availability_zone}",
@@ -124,9 +142,11 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
     privateRouteTable = RouteTable(
         resource_name=f"{base_name}-private-{availability_zone}",
         vpc_id=vpc.id,
+        propagating_vgws=[vpnGateway.id],
         tags=tagger.create_tags(f"{base_name}-private-{availability_zone}"),
         opts=ResourceOptions(parent=privateSubnet),
     )
+    private_route_tables.append(privateRouteTable)
     defaultPrivateRoute = Route(
         resource_name=f"{base_name}-private-{availability_zone}",
         destination_cidr_block="0.0.0.0/0",
@@ -140,3 +160,53 @@ for availability_zone, public_cidr_block, private_cidr_block in zip(
         subnet_id=privateSubnet.id,
         opts=ResourceOptions(parent=privateRouteTable),
     )
+
+for transit_gateway in vpc_config.get("transit_gateways", []):
+    transitGateway = TransitGateway.get(
+        resource_name=f"{base_name}-{transit_gateway['name']}",
+        id=transit_gateway["id"],
+    )
+    transitGatewayVpcAttachment = VpcAttachment(
+        resource_name=f"{base_name}-{transit_gateway['name']}",
+        dns_support="enable",
+        subnet_ids=[private_subnet.id for private_subnet in private_subnets],
+        transit_gateway_default_route_table_association=True,
+        transit_gateway_default_route_table_propagation=True,
+        transit_gateway_id=transitGateway.id,
+        vpc_id=vpc.id,
+        tags=tagger.create_tags(f"{base_name}-{transit_gateway['name']}"),
+        opts=ResourceOptions(
+            depends_on=[transitGateway].extend(private_subnets), parent=vpc
+        ),
+    )
+    for availability_zone, privateRouteTable in zip(
+        availability_zones, private_route_tables
+    ):
+        for route in transit_gateway.get("routes", []):
+            transitGatewayPrivateRoute = Route(
+                resource_name="{}-private-{}-{}-{}".format(
+                    base_name, availability_zone, transit_gateway["name"], route["name"]
+                ),
+                destination_cidr_block=route["cidr_block"],
+                transit_gateway_id=transitGateway.id,
+                route_table_id=privateRouteTable.id,
+                opts=ResourceOptions(
+                    depends_on=transitGateway, parent=privateRouteTable
+                ),
+            )
+
+flowLogGroup = LogGroup(
+    resource_name=f"{base_name}-vpc-flow-log",
+    name=f"{base_name}-vpc-flow-log",
+    retention_in_days=400,
+    tags=tagger.create_tags(f"{base_name}-vpc-flow-log"),
+)
+flowLog = FlowLog(
+    resource_name=base_name,
+    iam_role_arn=flowLogRole.arn,
+    log_destination=flowLogGroup.arn,
+    traffic_type="ALL",
+    vpc_id=vpc.id,
+    tags=tagger.create_tags(base_name),
+    opts=ResourceOptions(parent=vpc),
+)

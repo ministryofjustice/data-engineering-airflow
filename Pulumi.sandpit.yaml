@@ -1,4 +1,4 @@
-encryptionsalt: v1:T9q7uDyEaE0=:v1:yF6EMYWiihI5gpmw:M76o4sQ9SL8p439+H+YJCbm44nEqXg==
+encryptionsalt: v1:4PZXFHNMW5A=:v1:MYFVluz1XgI5A5YD:pKaRb1FH7lxJhI9YPdKmq59rgq1quA==
 config:
   aws:assume_role:
     role_arn: arn:aws:iam::593291632749:role/data-engineering-infrastructure
@@ -7,28 +7,28 @@ config:
     cluster:
       kubernetes_version: "1.23"
       node_groups:
-        - name: standard
-          ami_release_version: 1.23.9-20220824
+        - ami_release_version: 1.23.9-20220824
           instance_types:
-            - t3a.large
-            - t3.large
-            - t2.large
+            - t3a.small
+            - t3.small
+            - t2.small
+          name: standard
           scaling_config:
-            desired_size: 2
-            max_size: 10
+            desired_size: 1
+            max_size: 5
             min_size: 0
-          disk_size: 150
-        - name: high-memory
-          ami_release_version: 1.23.9-20220824
+          disk_size: 20
+        - ami_release_version: 1.23.9-20220824
           instance_types:
             - r6i.4xlarge
           labels:
             high-memory: "true"
+          name: high-memory
           scaling_config:
             desired_size: 0
             max_size: 1
             min_size: 0
-          disk_size: 150
+          disk_size: 20
           taints:
             - effect: NO_SCHEDULE
               key: high-memory
@@ -59,22 +59,14 @@ config:
       mojap-airflow-tools==2.2.1
     smtp_mail_from: dataengineering@digital.justice.gov.uk
   data-engineering-airflow:vpc:
-    cidr_block: 10.200.0.0/16
-    transit_gateways:
-      - name: cloud-platform
-        id: tgw-009e14703041026a5
-        routes:
-          - name: noms-live
-            cidr_block: 10.40.0.0/18
-      - name: moj
-        id: tgw-0e7b982ea47c28fba
+    cidr_block: 10.202.0.0/16
     private_subnets:
       cidr_blocks:
-        - 10.200.20.0/24
-        - 10.200.21.0/24
-        - 10.200.22.0/24
+        - 10.202.20.0/24
+        - 10.202.21.0/24
+        - 10.202.22.0/24
     public_subnets:
       cidr_blocks:
-        - 10.200.10.0/24
-        - 10.200.11.0/24
-        - 10.200.12.0/24
+        - 10.202.10.0/24
+        - 10.202.11.0/24
+        - 10.202.12.0/24

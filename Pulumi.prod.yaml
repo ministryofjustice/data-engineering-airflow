@@ -5,31 +5,32 @@ config:
   aws:region: eu-west-1
   data-engineering-airflow:eks:
     cluster:
-      kubernetes_version: "1.21"
+      kubernetes_version: "1.23"
       node_groups:
         - name: standard
-          ami_release_version: 1.21.5-20220216
+          ami_release_version: 1.23.9-20220824
           capacity_type: ON_DEMAND
           instance_types:
-            - t3a.medium
-            - t3.medium
-            - t2.medium
+            - t3a.large
+            - t3.large
+            - t2.large
           scaling_config:
             desired_size: 1
             max_size: 25
             min_size: 1
+          disk_size: 150
         - name: high-memory
-          ami_type: AL2_ARM_64
-          ami_release_version: 1.21.5-20220216
+          ami_release_version: 1.23.9-20220824
           capacity_type: ON_DEMAND
           instance_types:
-            - r6g.4xlarge
+            - r6i.4xlarge
           labels:
             high-memory: "true"
           scaling_config:
             desired_size: 0
             max_size: 1
             min_size: 0
+          disk_size: 150
           taints:
             - effect: NO_SCHEDULE
               key: high-memory
@@ -39,31 +40,45 @@ config:
           - arn:aws:iam::593291632749:role/restricted-admin
           - arn:aws:iam::189157455002:role/restricted-admin
           - arn:aws:iam::042130406152:role/github-actions-runner
+      vpc_cni:
+        image_version: 1.11.3
+        image_account_id: 602401143452
     cluster_autoscaler:
-      chart_version: 9.10.7
+      chart_version: 9.20.1
     gatekeeper:
-      chart_version: 3.6.0
+      chart_version: 3.9.0
     kube2iam:
       chart_version: 2.6.0
   data-engineering-airflow:mwaa:
-    airflow_version: 2.0.2
+    airflow_version: 2.2.2
     environment_class: mw1.medium
     max_workers: 10
     min_workers: 1
     requirements: |
-      --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.0.2/constraints-3.7.txt"
+      --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.2.2/constraints-3.7.txt"
       apache-airflow[cncf.kubernetes]
       kubernetes
-      mojap-airflow-tools==2.1.0
+      mojap-airflow-tools==2.2.1
+    smtp_mail_from: dataengineering@digital.justice.gov.uk
   data-engineering-airflow:vpc:
-    cidr_block: 10.194.0.0/16
+    cidr_block: 10.201.0.0/16
+    transit_gateways:
+      - name: cloud-platform
+        id: tgw-009e14703041026a5
+        routes:
+          - name: noms-live
+            cidr_block: 10.40.0.0/18
+          - name: laa-prod
+            cidr_block: 10.205.0.0/20
+      - name: moj
+        id: tgw-0e7b982ea47c28fba
     private_subnets:
       cidr_blocks:
-        - 10.194.20.0/24
-        - 10.194.21.0/24
-        - 10.194.22.0/24
+        - 10.201.20.0/24
+        - 10.201.21.0/24
+        - 10.201.22.0/24
     public_subnets:
       cidr_blocks:
-        - 10.194.10.0/24
-        - 10.194.11.0/24
-        - 10.194.12.0/24
+        - 10.201.10.0/24
+        - 10.201.11.0/24
+        - 10.201.12.0/24

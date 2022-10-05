@@ -1,10 +1,10 @@
 import json
 
 import pulumi_kubernetes as k8s
-from pulumi import ResourceOptions
+from pulumi import Alias, ResourceOptions
 
 from ..base import environment_name
-from .cluster import cluster
+from .cluster import cluster, cluster_provider
 from .kube2iam import kube2iam
 
 # See https://docs.aws.amazon.com/mwaa/latest/userguide/mwaa-eks-example.html
@@ -20,7 +20,10 @@ airflow_namespace = k8s.core.v1.Namespace(
         },
     ),
     opts=ResourceOptions(
-        provider=cluster.provider, depends_on=[kube2iam], parent=cluster
+        provider=cluster_provider,
+        delete_before_replace=True,
+        depends_on=[kube2iam],
+        parent=cluster,
     ),
 )
 
@@ -45,7 +48,12 @@ role = k8s.rbac.v1.Role(
             verbs=["create", "describe", "delete", "get", "list", "patch", "update"],
         )
     ],
-    opts=ResourceOptions(provider=cluster.provider, parent=cluster),
+    opts=ResourceOptions(
+        provider=cluster_provider,
+        delete_before_replace=True,
+        parent=airflow_namespace,
+        aliases=[Alias(parent=cluster)],
+    ),
 )
 
 roleBinding = k8s.rbac.v1.RoleBinding(
@@ -57,5 +65,10 @@ roleBinding = k8s.rbac.v1.RoleBinding(
     role_ref=k8s.rbac.v1.RoleRefArgs(
         api_group="rbac.authorization.k8s.io", kind="Role", name="mwaa-role"
     ),
-    opts=ResourceOptions(provider=cluster.provider, parent=cluster),
+    opts=ResourceOptions(
+        provider=cluster_provider,
+        delete_before_replace=True,
+        parent=airflow_namespace,
+        aliases=[Alias(parent=cluster)],
+    ),
 )
