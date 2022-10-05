@@ -5,6 +5,7 @@ import pulumi_eks as eks
 from pulumi import ResourceOptions
 from pulumi_kubernetes import Provider
 
+from ..providers import dataProvider
 from ..base import base_name, caller_arn, eks_config, region, tagger
 from ..iam.roles import executionRole, instanceRole
 from ..vpc import private_subnets, vpc
@@ -58,11 +59,13 @@ cluster = eks.Cluster(
     ),
     vpc_id=vpc.id,
     tags=tagger.create_tags(name=base_name),
+    opts=ResourceOptions(provider=dataProvider)
 )
 
 cluster_provider = Provider(
     resource_name=base_name,
     kubeconfig=cluster.kubeconfig.apply(lambda k: json.dumps(k)),
+    opts=ResourceOptions(parent=dataProvider)
 )
 
 node_groups = cluster_config["node_groups"]

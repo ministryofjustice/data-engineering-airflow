@@ -10,6 +10,7 @@ from pulumi_aws.iam import (
 )
 from pulumi_aws.iam.role_policy import RolePolicy
 
+from ..providers import dataProvider
 from ..base import account_id, base_name, region, tagger
 
 executionRole = Role(
@@ -34,6 +35,7 @@ executionRole = Role(
     description="Execution role for Airflow",
     name=f"{base_name}-execution-role",
     tags=tagger.create_tags(f"{base_name}-execution-role"),
+    opts=ResourceOptions(provider=dataProvider)
 )
 
 instanceRole = Role(
@@ -61,7 +63,8 @@ instanceRole = Role(
     name=f"{base_name}-node-instance-role",
     tags=tagger.create_tags(f"{base_name}-node-instance-role"),
     opts=ResourceOptions(
-        protect=True
+        protect=True,
+        opts=ResourceOptions(provider=dataProvider)
     ),  # Protected as deletion will break assume role policies that reference this role
 )
 
@@ -105,6 +108,7 @@ clusterAutoscalerRole = Role(
     ],
     name=f"{base_name}-cluster-autoscaler-role",
     tags=tagger.create_tags(f"{base_name}-cluster-autoscaler-role"),
+    opts=ResourceOptions(provider=dataProvider)
 )
 
 RolePolicy(
@@ -149,6 +153,7 @@ defaultRole = Role(
     ).json,
     name=f"{base_name}-default-pod-role",
     tags=tagger.create_tags(f"{base_name}-default-pod-role"),
+    opts=ResourceOptions(provider=dataProvider)
 )
 
 flowLogRole = Role(
@@ -198,4 +203,5 @@ flowLogRole = Role(
     ],
     name=f"{base_name}-flow-log-role",
     tags=tagger.create_tags(f"{base_name}-flow-log-role"),
+    opts=ResourceOptions(provider=dataProvider)
 )

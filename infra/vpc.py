@@ -19,6 +19,7 @@ from pulumi_aws.ec2transitgateway import TransitGateway, VpcAttachment
 
 from .base import base_name, config, tagger
 from .iam.roles import flowLogRole
+from .providers import dataProvider
 
 vpc_config = config.require_object("vpc")
 
@@ -31,6 +32,7 @@ vpc = Vpc(
     enable_dns_support=True,
     enable_dns_hostnames=True,
     tags=tagger.create_tags(base_name),
+    opts=pulumi.ResourceOptions(provider=dataProvider)
 )
 
 # this is called virtual private gateway in the control panel
@@ -200,6 +202,7 @@ flowLogGroup = LogGroup(
     name=f"{base_name}-vpc-flow-log",
     retention_in_days=400,
     tags=tagger.create_tags(f"{base_name}-vpc-flow-log"),
+    ops=ResourceOptions(provider=dataProvider)
 )
 flowLog = FlowLog(
     resource_name=base_name,
