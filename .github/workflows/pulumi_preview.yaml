@@ -40,5 +40,5 @@ jobs:
           stack: ${{ matrix.stack }}
           pulumi-action: preview
           backend-url: s3://alpha-mojap-de-courts-team/stephen/a-new-pulumi-test?profile=github-actions@data
-          landing-arn: arn:aws:iam::335823981503:role/DataEngineeringGitHubActionIDRole20220907090933063600000002
+          landing-arn: arn:aws:iam::335823981503:role/DataEngineeringGitHubActionIDRole20220907090933063500000001
           pulumi-passphrase: ""
