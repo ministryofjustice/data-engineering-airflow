@@ -38,6 +38,7 @@ config:
           - arn:aws:iam::593291632749:role/restricted-admin
           - arn:aws:iam::189157455002:role/restricted-admin
           - arn:aws:iam::042130406152:role/github-actions-runner
+          - arn:aws:iam::593291632749:role/PenTester
       vpc_cni:
         image_version: 1.11.3
         image_account_id: 602401143452
