@@ -9,11 +9,8 @@ vpc_config = config.require_object("vpc")
 
 account_id = get_caller_identity().account_id
 
-<<<<<<< HEAD
-=======
 # caller_arn = Config("aws").require_object("assume_role")["role_arn"]
 
->>>>>>> 8eebba6899e1dfff9b9af3e509667cab9ab982d8
 region = get_region().name
 
 stack = get_stack()

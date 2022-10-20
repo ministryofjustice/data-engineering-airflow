@@ -5,11 +5,7 @@ import pulumi_eks as eks
 from pulumi import ResourceOptions
 from pulumi_kubernetes import Provider
 
-<<<<<<< HEAD
 from ..providers import dataProvider, data_arn
-=======
-from ..providers import dataProvider
->>>>>>> 8eebba6899e1dfff9b9af3e509667cab9ab982d8
 from ..base import base_name, eks_config, region, tagger
 from ..iam.roles import executionRole, instanceRole
 from ..vpc import private_subnets, vpc
@@ -47,11 +43,7 @@ cluster = eks.Cluster(
     instance_role=instanceRole,
     name=base_name,
     private_subnet_ids=[private_subnet.id for private_subnet in private_subnets],
-<<<<<<< HEAD
     provider_credential_opts=eks.KubeconfigOptionsArgs(role_arn=data_arn),
-=======
-    # provider_credential_opts=eks.KubeconfigOptionsArgs(role_arn=caller_arn),
->>>>>>> 8eebba6899e1dfff9b9af3e509667cab9ab982d8
     role_mappings=role_mappings,
     skip_default_node_group=True,
     version=str(cluster_config["kubernetes_version"]),
