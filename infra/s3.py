@@ -38,12 +38,12 @@ bucket_policy = BucketPolicy(
     resource_name=f"mojap-{base_name}-bucket-policy",
     bucket=f"mojap-{base_name}",
     policy=policy,
-    opts=ResourceOptions(parent=bucket),
+    opts=ResourceOptions(parent=bucket, provider=dataProvider),
 )
 
 requirementsBucketObject = BucketObject(
     resource_name=f"{base_name}-requirements",
-    opts=ResourceOptions(parent=bucket),
+    opts=ResourceOptions(parent=bucket, provider=dataProvider),
     bucket=bucket.id,
     content=mwaa_config["requirements"],
     key="requirements.txt",
@@ -52,7 +52,7 @@ requirementsBucketObject = BucketObject(
 
 BucketObject(
     resource_name=f"{base_name}-kube-config",
-    opts=ResourceOptions(parent=bucket, depends_on=[cluster]),
+    opts=ResourceOptions(parent=bucket, depends_on=[cluster], provider=dataProvider),
     bucket=bucket.id,
     content=cluster.kubeconfig.apply(prepare_kube_config),
     key="dags/.kube/config",
