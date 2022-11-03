@@ -67,7 +67,7 @@ config:
         routes:
           - name: noms-live
             cidr_block: 10.40.0.0/18
-          - name: mp
+          - name: modernisation-platform
             cidr_block: 10.26.0.0/15
       - name: moj
         id: tgw-0e7b982ea47c28fba
