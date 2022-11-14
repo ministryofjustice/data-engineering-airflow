@@ -7,9 +7,12 @@ ignore: |
   /.git
   /.github
   /venv
-
+  kyv.*.yaml
 rules:
   document-start: disable
+  indentation:
+    indent-sequences: whatever
+    level: warning
   line-length:
     level: warning
     allow-non-breakable-words: true
