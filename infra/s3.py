@@ -13,7 +13,7 @@ bucket = Bucket(
     name=f"mojap-{base_name}",
     tagger=tagger,
     versioning={"enabled": True},
-    opts=ResourceOptions(provider=dataProvider)
+    provider=dataProvider
 )
 
 
