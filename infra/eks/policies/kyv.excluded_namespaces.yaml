@@ -4,4 +4,4 @@ metadata:
   name: excluded-namespaces
   namespace: airflow
 data:
-  namespaces: "[\"cluster-autoscaler-system\", \"kube-system\", \"kube2iam-system\"]"
+  namespaces: "[\"cluster-autoscaler-system\", \"kube-system\", \"kube2iam-system\", \"kyverno\"]"
