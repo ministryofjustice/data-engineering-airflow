@@ -39,11 +39,11 @@ kyverno = k8s.helm.v3.Release(
 )
 
 # Generic path to append specific policy locations to
-policy_path = str(Path(__file__).parent)
+policy_path = str(Path(__file__).parent) + "/policies/"
 
 excluded_namespaces = k8s.yaml.ConfigFile(
     "kyverno-excluded-namespaces",
-    policy_path + "/policies/kyv.excluded_namespaces.yaml",
+    policy_path + "kyv.excluded_namespaces.yaml",
     opts=ResourceOptions(
         provider=cluster_provider, delete_before_replace=True, parent=kyverno
     ),
@@ -51,7 +51,7 @@ excluded_namespaces = k8s.yaml.ConfigFile(
 
 kyverno_privilege = k8s.yaml.ConfigFile(
     "kyverno-privilege-escalation",
-    policy_path + "/policies/kyv.privilege_escalation.yaml",
+    policy_path + "kyv.privilege_escalation.yaml",
     opts=ResourceOptions(
         provider=cluster_provider,
         delete_before_replace=True,
@@ -61,7 +61,7 @@ kyverno_privilege = k8s.yaml.ConfigFile(
 
 kyverno_non_root = k8s.yaml.ConfigFile(
     "kyverno-non-root",
-    policy_path + "/policies/kyv.run_as_non_root.yaml",
+    policy_path + "kyv.run_as_non_root.yaml",
     opts=ResourceOptions(
         provider=cluster_provider,
         delete_before_replace=True,
@@ -71,7 +71,7 @@ kyverno_non_root = k8s.yaml.ConfigFile(
 
 kyverno_non_root_user = k8s.yaml.ConfigFile(
     "kyverno-non-root-user",
-    policy_path + "/policies/kyv.run_as_non_root_user.yaml",
+    policy_path + "kyv.run_as_non_root_user.yaml",
     opts=ResourceOptions(
         provider=cluster_provider,
         delete_before_replace=True,
