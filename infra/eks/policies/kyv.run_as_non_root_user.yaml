@@ -17,11 +17,21 @@ spec:
   background: true
   rules:
     - name: run-as-non-root-user
+      context:
+      - name: excluded-namespaces
+        configMap:
+          name: excluded-namespaces
+          namespace: airflow
       match:
         any:
         - resources:
             kinds:
               - Pod
+      preconditions:
+      all:
+      - key: "{{request.object.metadata.namespace}}"
+        operator: AnyNotIn
+        value: "{{excluded-namespaces.data.namespaces}}"
       validate:
         message: >-
           Running as root is not allowed. The fields spec.securityContext.runAsUser,
