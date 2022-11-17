@@ -43,8 +43,8 @@ config:
         image_account_id: 602401143452
     cluster_autoscaler:
       chart_version: 9.20.1
-    gatekeeper:
-      chart_version: 3.9.0
+    kyverno:
+      chart_version: 2.5.3
     kube2iam:
       chart_version: 2.6.0
   data-engineering-airflow:mwaa:

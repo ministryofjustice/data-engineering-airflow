@@ -25,13 +25,13 @@ jobs:
           role-duration-seconds: 3600
       - name: Remove existing Pulumi installations
         run: |
-          rm -rf $HOME/.pulumi
+          rm -rf "$HOME/.pulumi"
       - name: Install Pulumi CLI
         uses: pulumi/setup-pulumi@v2
       - name: Get Stacks
         id: get-stacks
         run: |
-          echo "::set-output name=STACKS::$(find Pulumi.*.yaml | sed -ne "s/Pulumi\.\(.*\)\.yaml/\1/p" | jq --raw-input -cs 'split("\n") | map(select(. != ""))')"
+          echo "STACKS=$(find Pulumi.*.yaml | sed -ne "s/Pulumi\.\(.*\)\.yaml/\1/p" | jq --raw-input -cs 'split("\n") | map(select(. != ""))')" >> $GITHUB_OUTPUT
         env:
           PULUMI_CONFIG_PASSPHRASE: ""
   update-stack:
@@ -68,7 +68,7 @@ jobs:
           python-version: "3.9"
       - name: Remove existing Pulumi installations
         run: |
-          rm -rf $HOME/.pulumi
+          rm -rf "$HOME/.pulumi"
       - name: Install Pulumi CLI
         uses: pulumi/setup-pulumi@v2
         with:
