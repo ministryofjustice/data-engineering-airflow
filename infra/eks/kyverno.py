@@ -18,10 +18,23 @@ kyverno_namespace = k8s.core.v1.Namespace(
     ),
 )
 
-excluded_namespaces = [
-    "kube-system",
-    "kube2iam-system",
-    "cluster-autoscaler-system",
+statement = [
+    "[Event,*,*],"
+    "[*,kube-system,*],"
+    "[*,kube2iam-system,*],"
+    "[*,cluster-autoscaler-system,*],"
+    "[*,kube-public,*],"
+    "[*,kube-node-lease,*],"
+    "[Node,*,*],"
+    "[APIService,*,*],"
+    "[TokenReview,*,*],"
+    "[SubjectAccessReview,*,*],"
+    "[SelfSubjectAccessReview,*,*],"
+    "[*,kyverno,*],"
+    "[Binding,*,*],"
+    "[ReplicaSet,*,*],"
+    "[ReportChangeRequest,*,*],"
+    "[ClusterReportChangeRequest,*,*]"
 ]
 # Deploys Keyverno based on the chart specified in the stack .yaml
 kyverno = k8s.helm.v3.Release(
@@ -34,7 +47,7 @@ kyverno = k8s.helm.v3.Release(
     name="kyverno",
     namespace=kyverno_namespace.metadata.name,
     skip_await=False,
-    values={"resourceFiltersExcludeNamespaces": excluded_namespaces},
+    values={"config": {"resourceFilters": statement}},
     version=eks_config["kyverno"]["chart_version"],
     opts=ResourceOptions(
         provider=cluster_provider,
