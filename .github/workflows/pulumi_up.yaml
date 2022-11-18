@@ -83,5 +83,3 @@ jobs:
         run: |
           pulumi stack select -c ${{ matrix.stack }}
           pulumi up --refresh --yes --skip-preview
-          aws eks --region eu-west-1 update-kubeconfig --name airflow-${{ matrix.stack }}
-          kubectl replace -f ./infra/eks/polcies/kyv.excluded_namespaces.yaml
