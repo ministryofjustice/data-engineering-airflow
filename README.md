@@ -144,6 +144,21 @@ To deploy or update an environment:
    If you get an error message during the update, try to run the update again
    before debugging.
 
+4. On making changes to kyverno:
+
+   If you have updated/upgraded the kyverno deployment, you will need to
+   re-deploy our modified config file. This is not currently possible via
+   pulumi (see https://github.com/pulumi/pulumi-kubernetes/issues/264), so
+   must be done as a manual step using the following commands.
+
+   ```zsh
+   aws eks --region eu-west-1 update-kubeconfig --name airflow-<stack_name>}
+   kubectl replace -f ./infra/eks/polcies/kyv.excluded_namespaces.yaml
+   ```
+
+This will correctly update the kyverno settings for the current environment.
+The github action will do this automatically on each PR merge.
+
 ### How to upgrade the Kubernetes version
 
 For all available Kubernetes versions, see the
