@@ -1,5 +1,5 @@
 from infra import base, mwaa, s3, vpc
-from infra.eks import airflow, cluster, cluster_autoscaler, kube2iam, kyverno
+from infra.eks import airflow, cluster, cluster_autoscaler, kube2iam
 from infra.iam import policies, role_policies, roles
 
 __all__ = [
@@ -7,7 +7,6 @@ __all__ = [
     "base",
     "cluster",
     "cluster_autoscaler",
-    "kyverno",
     "kube2iam",
     "mwaa",
     "policies",

@@ -1,12 +1,10 @@
-from pathlib import Path
+""" from pathlib import Path
 
 import pulumi_kubernetes as k8s
 from pulumi import Alias, ResourceOptions
 
 from ..base import eks_config
 from .cluster import cluster, cluster_provider
-
-# See https://github.com/open-policy-agent/gatekeeper-library/
 
 kyverno_namespace = k8s.core.v1.Namespace(
     resource_name="kyverno-system",
@@ -78,3 +76,4 @@ kyverno_non_root_user = k8s.yaml.ConfigFile(
         parent=excluded_namespaces,
     ),
 )
+ """
