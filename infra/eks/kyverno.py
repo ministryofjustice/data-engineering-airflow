@@ -18,12 +18,16 @@ kyverno_namespace = k8s.core.v1.Namespace(
     ),
 )
 
-excluded_namespaces = ["kube-system", "kube2iam-system", "cluster-autoscaler-system"]
+excluded_namespaces = [
+    "kube-system",
+    "kube2iam-system",
+    "cluster-autoscaler-system",
+]
 # Deploys Keyverno based on the chart specified in the stack .yaml
 kyverno = k8s.helm.v3.Release(
     resource_name="kyverno",
     chart="kyverno",
-    create_namespace=False,
+    create_namespace=True,
     repository_opts=k8s.helm.v3.RepositoryOptsArgs(
         repo="https://kyverno.github.io/kyverno/"
     ),
