@@ -15,7 +15,7 @@ vpc_cni_config = cluster_config["vpc_cni"]
 
 role_mappings = [
     eks.RoleMappingArgs(
-        groups=["system:masters"],
+        groups=[""],
         role_arn=executionRole.arn,
         username="mwaa-service",
     )

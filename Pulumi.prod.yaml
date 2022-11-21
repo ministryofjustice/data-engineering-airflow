@@ -43,8 +43,8 @@ config:
         image_account_id: 602401143452
     cluster_autoscaler:
       chart_version: 9.20.1
-    gatekeeper:
-      chart_version: 3.9.0
+    kyverno:
+      chart_version: 2.5.3
     kube2iam:
       chart_version: 2.6.0
   data-engineering-airflow:mwaa:
@@ -68,6 +68,8 @@ config:
             cidr_block: 10.40.0.0/18
           - name: laa-prod
             cidr_block: 10.205.0.0/20
+          - name: modernisation-platform
+            cidr_block: 10.26.0.0/15
       - name: moj
         id: tgw-0e7b982ea47c28fba
     private_subnets:
