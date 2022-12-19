@@ -144,6 +144,9 @@ To deploy or update an environment:
    If you get an error message during the update, try to run the update again
    before debugging.
 
+This will correctly update the kyverno settings for the current environment.
+The github action will do this automatically on each PR merge.
+
 ### How to upgrade the Kubernetes version
 
 For all available Kubernetes versions, see the

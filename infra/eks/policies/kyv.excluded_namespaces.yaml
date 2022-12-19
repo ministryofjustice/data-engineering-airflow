@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: excluded-namespaces
-  namespace: airflow
-data:
-  namespaces: "[\"cluster-autoscaler-system\", \"kube-system\", \"kube2iam-system\", \"kyverno\"]"
