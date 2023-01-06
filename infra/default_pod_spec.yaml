@@ -6,10 +6,17 @@ metadata:
   annotations: 
     iam.amazonaws.com/role: no_role
 spec:
+  securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
   containers:
     - name: default_python_pod
       image: 189157455002.dkr.ecr.eu-west-1.amazonaws.com/python:3.8-slim
-      imagePullPolicy: IfNotPresent
-  securityContext:
-    runAsNonRoot: true
-    runAsUser: 1000
+      imagePullPolicy: Always
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 451000
+        allowPrivilegeEscalation: false
+        capabilities:
+            drop:
+            - ALL
