@@ -6,6 +6,8 @@ This repository defines all the infrastructure required to create:
   [Amazon Managed Workflows for Apache Airflow (MWAA)](https://aws.amazon.com/managed-workflows-for-apache-airflow/))
 - an EKS cluster on which tasks can be run using the `KubernetesPodOperator`
 
+the backend url for this is `s3://data-engineering-airflow-pulumi-backend`
+
 ## Prerequisites
 
 To work with this repository, you must have the following installed:

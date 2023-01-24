@@ -1,5 +1,7 @@
+from pulumi import ResourceOptions
 from pulumi_aws.iam import GetPolicyDocumentStatementArgs, Policy, get_policy_document
 
+from ..providers import dataProvider
 from ..base import account_id, base_name, environment_name, region, tagger
 
 Policy(
@@ -17,4 +19,5 @@ Policy(
         ]
     ).json,
     tags=tagger.create_tags(f"{base_name}-ui-access"),
+    opts=ResourceOptions(provider=dataProvider)
 )

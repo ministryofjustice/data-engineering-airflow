@@ -1,4 +1,4 @@
-from pulumi import ResourceOptions
+from pulumi import ResourceOptions, InvokeOptions
 from pulumi_aws.iam import (
     GetPolicyDocumentStatementArgs,
     GetPolicyDocumentStatementConditionArgs,
@@ -10,6 +10,7 @@ from pulumi_aws.iam import (
 )
 from pulumi_aws.iam.role_policy import RolePolicy
 
+from ..providers import dataProvider
 from ..base import account_id, base_name, region, tagger
 
 executionRole = Role(
@@ -27,13 +28,15 @@ executionRole = Role(
                             "airflow.amazonaws.com",
                         ],
                     )
-                ],
+                ]
             )
-        ]
+        ],
+        opts=InvokeOptions(provider=dataProvider)
     ).json,
     description="Execution role for Airflow",
     name=f"{base_name}-execution-role",
     tags=tagger.create_tags(f"{base_name}-execution-role"),
+    opts=ResourceOptions(provider=dataProvider)
 )
 
 instanceRole = Role(
@@ -48,20 +51,32 @@ instanceRole = Role(
                 ],
                 actions=["sts:AssumeRole"],
             )
-        ]
+        ],
+        opts=InvokeOptions(provider=dataProvider)
     ).json,
     managed_policy_arns=[
-        get_policy(arn="arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy").arn,
         get_policy(
-            arn="arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+            arn="arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+            opts=InvokeOptions(provider=dataProvider)
         ).arn,
-        get_policy(arn="arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy").arn,
-        get_policy(arn="arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore").arn,
+        get_policy(
+            arn="arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+            opts=InvokeOptions(provider=dataProvider)
+        ).arn,
+        get_policy(
+            arn="arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+            opts=InvokeOptions(provider=dataProvider)
+        ).arn,
+        get_policy(
+            arn="arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+            opts=InvokeOptions(provider=dataProvider)
+        ).arn,
     ],
     name=f"{base_name}-node-instance-role",
     tags=tagger.create_tags(f"{base_name}-node-instance-role"),
     opts=ResourceOptions(
-        protect=True
+        protect=False,
+        provider=dataProvider
     ),  # Protected as deletion will break assume role policies that reference this role
 )
 
@@ -72,10 +87,10 @@ clusterAutoscalerRole = Role(
             GetPolicyDocumentStatementArgs(
                 principals=[
                     GetPolicyDocumentStatementPrincipalArgs(
-                        identifiers=["ec2.amazonaws.com"], type="Service"
+                        identifiers=["ec2.amazonaws.com"], type="Service",
                     ),
                     GetPolicyDocumentStatementPrincipalArgs(
-                        identifiers=[instanceRole.arn], type="AWS"
+                        identifiers=[instanceRole.arn], type="AWS",
                     ),
                 ],
                 actions=["sts:AssumeRole"],
@@ -99,12 +114,14 @@ clusterAutoscalerRole = Role(
                         ],
                         resources=["*"],
                     )
-                ]
+                ],
+                opts=InvokeOptions(provider=dataProvider)
             ).json,
         ),
     ],
     name=f"{base_name}-cluster-autoscaler-role",
     tags=tagger.create_tags(f"{base_name}-cluster-autoscaler-role"),
+    opts=ResourceOptions(provider=dataProvider)
 )
 
 RolePolicy(
@@ -119,7 +136,8 @@ RolePolicy(
                     clusterAutoscalerRole.arn,
                 ],
             )
-        ]
+        ],
+        opts=InvokeOptions(provider=dataProvider)
     ).json,
     role=instanceRole.id,
     opts=ResourceOptions(parent=instanceRole),
@@ -132,7 +150,7 @@ defaultRole = Role(
             GetPolicyDocumentStatementArgs(
                 principals=[
                     GetPolicyDocumentStatementPrincipalArgs(
-                        identifiers=["ec2.amazonaws.com"], type="Service"
+                        identifiers=["ec2.amazonaws.com"], type="Service",
                     )
                 ],
                 actions=["sts:AssumeRole"],
@@ -140,7 +158,7 @@ defaultRole = Role(
             GetPolicyDocumentStatementArgs(
                 principals=[
                     GetPolicyDocumentStatementPrincipalArgs(
-                        identifiers=[instanceRole.arn], type="AWS"
+                        identifiers=[instanceRole.arn], type="AWS",
                     )
                 ],
                 actions=["sts:AssumeRole"],
@@ -149,6 +167,7 @@ defaultRole = Role(
     ).json,
     name=f"{base_name}-default-pod-role",
     tags=tagger.create_tags(f"{base_name}-default-pod-role"),
+    opts=ResourceOptions(provider=dataProvider)
 )
 
 flowLogRole = Role(
@@ -158,7 +177,7 @@ flowLogRole = Role(
             GetPolicyDocumentStatementArgs(
                 principals=[
                     GetPolicyDocumentStatementPrincipalArgs(
-                        identifiers=["vpc-flow-logs.amazonaws.com"], type="Service"
+                        identifiers=["vpc-flow-logs.amazonaws.com"], type="Service",
                     )
                 ],
                 actions=["sts:AssumeRole"],
@@ -192,10 +211,12 @@ flowLogRole = Role(
                         ],
                         resources=["*"],
                     )
-                ]
+                ],
+                opts=InvokeOptions(provider=dataProvider),
             ).json,
         )
     ],
     name=f"{base_name}-flow-log-role",
     tags=tagger.create_tags(f"{base_name}-flow-log-role"),
+    opts=ResourceOptions(provider=dataProvider)
 )

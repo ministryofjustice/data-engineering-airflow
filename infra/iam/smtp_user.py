@@ -7,7 +7,7 @@ from pulumi_aws.iam import (
     UserPolicyAttachment,
     get_policy_document,
 )
-
+from ..providers import dataProvider
 from ..base import base_name, tagger
 
 # create an IAM user who can send emails via SES
@@ -15,6 +15,7 @@ smtpUser = User(
     resource_name=f"{base_name}-smtp-user",
     name=f"{base_name}-smtp-user",
     tags=tagger.create_tags(f"{base_name}-execution-role"),
+    opts=ResourceOptions(provider=dataProvider)
 )
 
 # create an access key, which will form the SMTP user/pass

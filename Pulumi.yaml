@@ -1,5 +1,3 @@
 name: data-engineering-airflow
 runtime: python
 description: Managed Apache Airflow environments with EKS
-backend:
-  url: s3://data-engineering-airflow-pulumi-backend

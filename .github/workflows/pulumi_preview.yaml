@@ -1,14 +1,12 @@
 name: Pulumi Preview
-on:
-  pull_request:
-    branches:
-      - main
-env:
-  AWS_ROLE_TO_ASSUME: arn:aws:iam::189157455002:role/github-actions-infrastructure
+on: pull_request
+permissions:
+  id-token: write
+  contents: read
 jobs:
   get-stacks:
     name: Get Stacks
-    runs-on: [self-hosted, management-infrastructure]
+    runs-on: ubuntu-latest
     outputs:
       STACKS: ${{ steps.get-stacks.outputs.STACKS }}
     steps:
@@ -16,13 +14,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-region: eu-west-1
-          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
-          role-skip-session-tagging: true
-          role-duration-seconds: 3600
       - name: Remove existing Pulumi installations
         run: |
           rm -rf "$HOME/.pulumi"
@@ -37,49 +28,17 @@ jobs:
   preview-stack:
     name: Preview Stack
     needs: get-stacks
-    runs-on: [self-hosted, management-infrastructure]
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         stack: ${{ fromJson(needs.get-stacks.outputs.STACKS) }}
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
+      - name: do the pulumi preview
+        uses: ministryofjustice/actions-pulumi@main
         with:
-          fetch-depth: 1
-      - name: Upgrade AWS CLI
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install --update
-          aws --version
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-region: eu-west-1
-          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
-          role-skip-session-tagging: true
-          role-duration-seconds: 3600
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.9"
-      - name: Remove existing Pulumi installations
-        run: |
-          rm -rf "$HOME/.pulumi"
-      - name: Install Pulumi CLI
-        uses: pulumi/setup-pulumi@v2
-        with:
-          pulumi-version: ^3.0.0
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install --upgrade -r requirements.txt; fi
-      - name: Preview changes
-        env:
-          PULUMI_CONFIG_PASSPHRASE: ""
-        run: |
-          pulumi stack select -c ${{ matrix.stack }}
-          pulumi preview --refresh
+          stack: ${{ matrix.stack }}
+          pulumi-action: preview
+          backend-url: s3://data-engineering-airflow-pulumi-backend?profile=github-actions@data-engineering
+          landing-arn: arn:aws:iam::335823981503:role/DataEngineeringGitHubActionIDRole20220907090933063500000001
+          pulumi-passphrase: ""
