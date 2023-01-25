@@ -32,7 +32,7 @@ bucket_policy = BucketPolicy(
     resource_name=f"mojap-{base_name}-bucket-policy",
     bucket=f"mojap-{base_name}",
     policy=policy,
-    opts=ResourceOptions(parent=bucket),
+    opts=ResourceOptions(parent=bucket, depends_on=bucket),
 )
 
 requirementsBucketObject = BucketObject(
