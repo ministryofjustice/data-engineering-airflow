@@ -55,6 +55,8 @@ jobs:
           aws --version
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
+      - name: Set up node
+        uses: actions/setup-node@v3
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
