@@ -36,6 +36,7 @@ environment = Environment(
         "smtp.smtp_password": accessKey.ses_smtp_password_v4,
         "smtp.smtp_mail_from": mwaa_config["smtp_mail_from"],
         "smtp.smtp_starttls": True,
+        "webserver.warn_deployment_exposure": False,
     },
     logging_configuration=EnvironmentLoggingConfigurationArgs(
         dag_processing_logs=EnvironmentLoggingConfigurationDagProcessingLogsArgs(
