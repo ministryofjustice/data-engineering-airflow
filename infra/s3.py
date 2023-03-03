@@ -52,3 +52,12 @@ BucketObject(
     key="dags/.kube/config",
     server_side_encryption="AES256",
 )
+
+BucketObject(
+    resource_name=f"{base_name}-default-pod-spec",
+    opts=ResourceOptions(parent=bucket, depends_on=[cluster]),
+    bucket=bucket.id,
+    source="./infra/default_pod_spec.yaml",
+    key="dags/.kube/default_pod_spec.yaml",
+    server_side_encryption="AES256",
+)
