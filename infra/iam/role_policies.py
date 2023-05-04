@@ -100,7 +100,7 @@ executionRolePolicy = RolePolicy(
     policy=Output.all(
         account_id=account_id,
         bucket_arn=bucket.arn,
-        cluster_arn=cluster_arn
+        cluster_arn=cluster_arn,
         environment_name=environment_name,
         region=region,
     ).apply(get_execution_role_policy),
