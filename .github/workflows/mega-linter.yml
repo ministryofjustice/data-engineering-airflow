@@ -3,7 +3,8 @@ name: MegaLinter
 on:
   pull_request:
     branches: [main]
-permissions: read-all
+permissions:
+  pull-requests: write
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
