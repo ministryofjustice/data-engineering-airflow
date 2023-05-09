@@ -1,6 +1,6 @@
 wheel
 data-engineering-pulumi-components>=0.4.0.dev1,<1.0.0
-pulumi==3.55.0
-pulumi-aws==5.30.0
+pulumi==3.53.1
+pulumi-aws==5.28.0
 pulumi-eks==0.41.2
-pulumi-kubernetes>=3.7.0,<=4.0.0
+pulumi-kubernetes==3.21.2
