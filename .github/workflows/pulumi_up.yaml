@@ -73,7 +73,7 @@ jobs:
           python-version: "3.9"
       - name: Remove existing Pulumi installations
         run: |
-          rm -rf "$HOME/.pulumi"
+          rm -rf "$HOME/runner/.pulumi"
       - name: Install Pulumi CLI
         uses: pulumi/setup-pulumi@v2
         with:

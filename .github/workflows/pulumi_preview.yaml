@@ -26,7 +26,7 @@ jobs:
           role-duration-seconds: 3600
       - name: Remove existing Pulumi installations
         run: |
-          rm -rf "$HOME/.pulumi"
+          rm -rf "$HOME/runner/.pulumi"
       - name: Install Pulumi CLI
         uses: moj-analytical-services/actions-setup-pulumi@main
       - name: Get Stacks
