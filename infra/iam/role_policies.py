@@ -88,13 +88,18 @@ def get_execution_role_policy(args):
     ).json
 
 
+if environment_name == "Sandpit":
+    cluster_arn = "arn:aws:eks:eu-west-1:312423030077:cluster/production-dBSvju9Y"
+else:
+    cluster_arn = cluster.core.cluster.arn
+
 executionRolePolicy = RolePolicy(
     resource_name=f"{base_name}-execution-role-policy",
     name=f"{base_name}-execution-role-policy",
     policy=Output.all(
         account_id=account_id,
         bucket_arn=bucket.arn,
-        cluster_arn=cluster.core.cluster.arn,
+        cluster_arn=cluster_arn,
         environment_name=environment_name,
         region=region,
     ).apply(get_execution_role_policy),
