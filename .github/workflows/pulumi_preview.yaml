@@ -18,7 +18,7 @@ jobs:
         with:
           fetch-depth: 1
       - name: Configure OIDC Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: eu-west-1
           role-to-assume: ${{ env.OIDC_ROLE_TO_ASSUME }}
@@ -26,7 +26,7 @@ jobs:
           role-duration-seconds: 3600
           role-session-name: githubactionsiamsession
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: eu-west-1
           role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
@@ -72,7 +72,7 @@ jobs:
         with:
           node-version: 18.14.0
       - name: Configure OIDC Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: eu-west-1
           role-to-assume: ${{ env.OIDC_ROLE_TO_ASSUME }}
@@ -80,7 +80,7 @@ jobs:
           role-duration-seconds: 3600
           role-session-name: githubactionsiamsession
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: eu-west-1
           role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
