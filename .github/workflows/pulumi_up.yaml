@@ -8,7 +8,7 @@ env:
 jobs:
   get-stacks:
     name: Get Stacks
-    runs-on: [self-hosted, management-infrastructure]
+    runs-on: ubuntu-latest
     outputs:
       STACKS: ${{ steps.get-stacks.outputs.STACKS }}
     steps:
