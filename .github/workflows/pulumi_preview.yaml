@@ -129,5 +129,6 @@ jobs:
           PULUMI_CONFIG_PASSPHRASE: ""
         run: |
           pulumi stack select -c ${{ matrix.stack }}
-          pulumi plugin rm resource aws 5.41.0
+          pulumi plugin rm resource aws 5.41.0 --yes
+          pulumi plugin ls
           pulumi preview --refresh
