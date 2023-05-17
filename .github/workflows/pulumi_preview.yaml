@@ -33,7 +33,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-region: eu-west-2
+          aws-region: eu-west-1
           role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -82,7 +82,7 @@ jobs:
       - name: Configure OIDC Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-region: eu-west-2
+          aws-region: eu-west-1
           role-to-assume: ${{ env.OIDC_ROLE_TO_ASSUME }}
           role-skip-session-tagging: true
           role-duration-seconds: 3600
