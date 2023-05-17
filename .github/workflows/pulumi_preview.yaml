@@ -124,5 +124,5 @@ jobs:
           PULUMI_CONFIG_PASSPHRASE: ""
         run: |
           pulumi stack select -c ${{ matrix.stack }}
-          pulumi refresh -y
+          pulumi stack export
           pulumi preview
