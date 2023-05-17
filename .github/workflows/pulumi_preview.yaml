@@ -82,7 +82,7 @@ jobs:
       - name: Configure OIDC Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-region: eu-west-1
+          aws-region: eu-west-2
           role-to-assume: ${{ env.OIDC_ROLE_TO_ASSUME }}
           role-skip-session-tagging: true
           role-duration-seconds: 3600
