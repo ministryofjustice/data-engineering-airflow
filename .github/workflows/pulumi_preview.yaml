@@ -87,6 +87,9 @@ jobs:
           role-skip-session-tagging: true
           role-duration-seconds: 3600
           role-session-name: githubactionsiamsession
+      - name: Check first caller
+        run: |
+          aws sts get-caller-identity
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -97,6 +100,9 @@ jobs:
           aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
           role-skip-session-tagging: true
           role-duration-seconds: 3600
+      - name: Check second caller
+        run: |
+          aws sts get-caller-identity
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
