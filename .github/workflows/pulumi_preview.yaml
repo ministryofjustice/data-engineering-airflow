@@ -7,7 +7,7 @@ permissions: {}
 
 env:
   OIDC_ROLE_TO_ASSUME: arn:aws:iam::189157455002:role/github-data-engineering-airflow
-  AWS_ROLE_TO_ASSUME: arn:aws:iam::189157455002:role/github-actions-infrastructure
+  AWS_ROLE_TO_ASSUME: arn:aws:iam::593291632749:role/github-actions-infrastructure
 jobs:
   get-stacks:
     name: Get Stacks
