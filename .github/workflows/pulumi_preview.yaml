@@ -114,6 +114,11 @@ jobs:
         uses: pulumi/setup-pulumi@v2
         with:
           pulumi-version: ^3.0.0
+      - name: Check current plugins
+        env:
+          PULUMI_CONFIG_PASSPHRASE: ""
+        run: |
+          pulumi plugin ls
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
