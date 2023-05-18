@@ -28,6 +28,7 @@ for role_arn in cluster_config["role_mappings"]["role_arns"]:
         )
     )
 
+euwest1 = aws.Provider("euwest1", region="eu-west-1")
 
 cluster = eks.Cluster(
     resource_name=base_name,
@@ -58,6 +59,7 @@ cluster = eks.Cluster(
     ),
     vpc_id=vpc.id,
     tags=tagger.create_tags(name=base_name),
+    opts=ResourceOptions(provider=euwest1)
 )
 
 cluster_provider = Provider(
