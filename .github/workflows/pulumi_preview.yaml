@@ -86,5 +86,6 @@ jobs:
         env:
           PULUMI_CONFIG_PASSPHRASE: ""
         run: |
+          pulumi plugin install resource aws 5.42.0
           pulumi stack select -c ${{ matrix.stack }}
           pulumi preview --refresh
