@@ -1,4 +1,4 @@
-from pulumi import ResourceOptions
+from pulumi import InvokeOptions, ResourceOptions
 from pulumi_aws import get_availability_zones
 from pulumi_aws.cloudwatch import LogGroup
 from pulumi_aws.ec2 import (
@@ -19,10 +19,13 @@ from pulumi_aws.ec2transitgateway import TransitGateway, VpcAttachment
 
 from .base import base_name, config, tagger
 from .iam.roles import flowLogRole
+from .providers import data_provider
 
 vpc_config = config.require_object("vpc")
 
-available = get_availability_zones(state="available")
+available = get_availability_zones(
+    state="available", opts=InvokeOptions(provider=data_provider)
+)
 availability_zones = available.names
 
 vpc = Vpc(
@@ -31,6 +34,7 @@ vpc = Vpc(
     enable_dns_support=True,
     enable_dns_hostnames=True,
     tags=tagger.create_tags(base_name),
+    opts=ResourceOptions(provider=data_provider),
 )
 
 # this is called virtual private gateway in the control panel
@@ -200,6 +204,7 @@ flowLogGroup = LogGroup(
     name=f"{base_name}-vpc-flow-log",
     retention_in_days=400,
     tags=tagger.create_tags(f"{base_name}-vpc-flow-log"),
+    opts=ResourceOptions(provider=data_provider),
 )
 flowLog = FlowLog(
     resource_name=base_name,

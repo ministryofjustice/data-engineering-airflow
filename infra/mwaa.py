@@ -15,12 +15,14 @@ from .base import base_name, environment_name, mwaa_config, region, stack, tagge
 from .iam.role_policies import executionRolePolicy
 from .iam.roles import executionRole
 from .iam.smtp_user import accessKey
+from .providers import data_provider
 from .s3 import bucket, requirementsBucketObject
 from .vpc import private_subnets, securityGroup
 
 sesEmail = EmailIdentity(
     resource_name="data_engineering_email",
     email=mwaa_config["smtp_mail_from"],
+    opts=ResourceOptions(provider=data_provider),
 )
 
 environment = Environment(
@@ -67,5 +69,7 @@ environment = Environment(
     requirements_s3_object_version=requirementsBucketObject.version_id,
     tags=tagger.create_tags(stack),
     webserver_access_mode="PUBLIC_ONLY",
-    opts=ResourceOptions(depends_on=[executionRolePolicy, sesEmail]),
+    opts=ResourceOptions(
+        depends_on=[executionRolePolicy, sesEmail], provider=data_provider
+    ),
 )

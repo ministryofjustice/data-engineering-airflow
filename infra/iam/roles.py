@@ -1,4 +1,4 @@
-from pulumi import ResourceOptions
+from pulumi import InvokeOptions, ResourceOptions
 from pulumi_aws.iam import (
     GetPolicyDocumentStatementArgs,
     GetPolicyDocumentStatementConditionArgs,
@@ -11,6 +11,7 @@ from pulumi_aws.iam import (
 from pulumi_aws.iam.role_policy import RolePolicy
 
 from ..base import account_id, base_name, region, tagger
+from ..providers import data_provider
 
 executionRole = Role(
     resource_name=f"{base_name}-execution-role",
@@ -29,11 +30,13 @@ executionRole = Role(
                     )
                 ],
             )
-        ]
+        ],
+        opts=InvokeOptions(provider=data_provider),
     ).json,
     description="Execution role for Airflow",
     name=f"{base_name}-execution-role",
     tags=tagger.create_tags(f"{base_name}-execution-role"),
+    opts=ResourceOptions(provider=data_provider),
 )
 
 instanceRole = Role(
@@ -48,20 +51,32 @@ instanceRole = Role(
                 ],
                 actions=["sts:AssumeRole"],
             )
-        ]
+        ],
+        opts=InvokeOptions(provider=data_provider),
     ).json,
     managed_policy_arns=[
-        get_policy(arn="arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy").arn,
         get_policy(
-            arn="arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+            arn="arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+            opts=InvokeOptions(provider=data_provider),
         ).arn,
-        get_policy(arn="arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy").arn,
-        get_policy(arn="arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore").arn,
+        get_policy(
+            arn="arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+            opts=InvokeOptions(provider=data_provider),
+        ).arn,
+        get_policy(
+            arn="arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+            opts=InvokeOptions(provider=data_provider),
+        ).arn,
+        get_policy(
+            arn="arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+            opts=InvokeOptions(provider=data_provider),
+        ).arn,
     ],
     name=f"{base_name}-node-instance-role",
     tags=tagger.create_tags(f"{base_name}-node-instance-role"),
     opts=ResourceOptions(
-        protect=True
+        protect=True,
+        provider=data_provider,
     ),  # Protected as deletion will break assume role policies that reference this role
 )
 
@@ -80,7 +95,8 @@ clusterAutoscalerRole = Role(
                 ],
                 actions=["sts:AssumeRole"],
             ),
-        ]
+        ],
+        opts=InvokeOptions(provider=data_provider),
     ).json,
     inline_policies=[
         RoleInlinePolicyArgs(
@@ -99,12 +115,14 @@ clusterAutoscalerRole = Role(
                         ],
                         resources=["*"],
                     )
-                ]
+                ],
+                opts=InvokeOptions(provider=data_provider),
             ).json,
         ),
     ],
     name=f"{base_name}-cluster-autoscaler-role",
     tags=tagger.create_tags(f"{base_name}-cluster-autoscaler-role"),
+    opts=ResourceOptions(provider=data_provider),
 )
 
 RolePolicy(
@@ -119,7 +137,8 @@ RolePolicy(
                     clusterAutoscalerRole.arn,
                 ],
             )
-        ]
+        ],
+        opts=InvokeOptions(provider=data_provider),
     ).json,
     role=instanceRole.id,
     opts=ResourceOptions(parent=instanceRole),
@@ -145,10 +164,12 @@ defaultRole = Role(
                 ],
                 actions=["sts:AssumeRole"],
             ),
-        ]
+        ],
+        opts=InvokeOptions(provider=data_provider),
     ).json,
     name=f"{base_name}-default-pod-role",
     tags=tagger.create_tags(f"{base_name}-default-pod-role"),
+    opts=ResourceOptions(provider=data_provider),
 )
 
 flowLogRole = Role(
@@ -175,7 +196,8 @@ flowLogRole = Role(
                     ),
                 ],
             )
-        ]
+        ],
+        opts=InvokeOptions(provider=data_provider),
     ).json,
     inline_policies=[
         RoleInlinePolicyArgs(
@@ -192,10 +214,12 @@ flowLogRole = Role(
                         ],
                         resources=["*"],
                     )
-                ]
+                ],
+                opts=InvokeOptions(provider=data_provider),
             ).json,
         )
     ],
     name=f"{base_name}-flow-log-role",
     tags=tagger.create_tags(f"{base_name}-flow-log-role"),
+    opts=ResourceOptions(provider=data_provider),
 )

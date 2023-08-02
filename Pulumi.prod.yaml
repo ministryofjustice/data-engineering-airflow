@@ -1,8 +1,5 @@
 encryptionsalt: v1:POsrlyZRcWk=:v1:l8SFSiBTf92aAScU:Sn/erZqPKSD1DAittO0G6DvEvRnLig==
 config:
-  aws:assumeRole:
-    roleArn: arn:aws:iam::593291632749:role/data-engineering-infrastructure
-  aws:region: eu-west-1
   data-engineering-airflow:eks:
     cluster:
       kubernetes_version: "1.24"
@@ -84,3 +81,5 @@ config:
         - 10.201.10.0/24
         - 10.201.11.0/24
         - 10.201.12.0/24
+  pulumi:disable-default-providers:
+    - '*'

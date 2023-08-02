@@ -6,9 +6,15 @@ from pulumi_aws.s3 import BucketObject, BucketPolicy
 
 from .base import base_name, mwaa_config, tagger
 from .eks.cluster import cluster
+from .providers import data_provider
 from .utils import prepare_kube_config
 
-bucket = Bucket(name=f"mojap-{base_name}", tagger=tagger, versioning={"enabled": True})
+bucket = Bucket(
+    name=f"mojap-{base_name}",
+    tagger=tagger,
+    versioning={"enabled": True},
+    opts=ResourceOptions(provider=data_provider),
+)
 
 
 statement = {

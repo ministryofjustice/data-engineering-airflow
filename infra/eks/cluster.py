@@ -7,6 +7,7 @@ from pulumi_kubernetes import Provider
 
 from ..base import base_name, caller_arn, eks_config, region, tagger
 from ..iam.roles import executionRole, instanceRole
+from ..providers import data_provider
 from ..vpc import private_subnets, vpc
 
 cluster_config = eks_config["cluster"]
@@ -58,6 +59,7 @@ cluster = eks.Cluster(
     ),
     vpc_id=vpc.id,
     tags=tagger.create_tags(name=base_name),
+    opts=ResourceOptions(providers={"aws": data_provider}),
 )
 
 cluster_provider = Provider(

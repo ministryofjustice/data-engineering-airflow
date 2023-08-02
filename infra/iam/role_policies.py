@@ -1,4 +1,4 @@
-from pulumi import Output, ResourceOptions
+from pulumi import InvokeOptions, Output, ResourceOptions
 from pulumi_aws.iam import (
     GetPolicyDocumentStatementArgs,
     GetPolicyDocumentStatementConditionArgs,
@@ -8,6 +8,7 @@ from pulumi_aws.iam import (
 
 from ..base import account_id, base_name, environment_name, region
 from ..eks.cluster import cluster
+from ..providers import data_provider
 from ..s3 import bucket
 from .roles import executionRole
 
@@ -84,7 +85,8 @@ def get_execution_role_policy(args):
             GetPolicyDocumentStatementArgs(
                 actions=["eks:DescribeCluster"], resources=[cluster_arn]
             ),
-        ]
+        ],
+        opts=InvokeOptions(provider=data_provider),
     ).json
 
 
