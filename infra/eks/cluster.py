@@ -59,7 +59,7 @@ cluster = eks.Cluster(
     ),
     vpc_id=vpc.id,
     tags=tagger.create_tags(name=base_name),
-    opts=ResourceOptions(providers={"aws": data_provider}),
+    opts=ResourceOptions(provider=data_provider),
 )
 
 cluster_provider = Provider(
