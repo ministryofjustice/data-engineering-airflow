@@ -18,7 +18,7 @@ config:
             desired_size: 1
             max_size: 25
             min_size: 1
-          disk_size: 200
+          disk_size: 150
         - name: high-memory
           ami_release_version: 1.24.9-20230127
           capacity_type: ON_DEMAND
@@ -30,7 +30,7 @@ config:
             desired_size: 0
             max_size: 1
             min_size: 0
-          disk_size: 150
+          disk_size: 200
           taints:
             - effect: NO_SCHEDULE
               key: high-memory
