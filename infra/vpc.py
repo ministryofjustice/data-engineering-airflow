@@ -169,6 +169,7 @@ for transit_gateway in vpc_config.get("transit_gateways", []):
     transitGateway = TransitGateway.get(
         resource_name=f"{base_name}-{transit_gateway['name']}",
         id=transit_gateway["id"],
+        opts=ResourceOptions(provider=data_provider),
     )
     transitGatewayVpcAttachment = VpcAttachment(
         resource_name=f"{base_name}-{transit_gateway['name']}",
