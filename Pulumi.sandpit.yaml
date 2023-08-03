@@ -1,7 +1,7 @@
 encryptionsalt: v1:4PZXFHNMW5A=:v1:MYFVluz1XgI5A5YD:pKaRb1FH7lxJhI9YPdKmq59rgq1quA==
 config:
-  aws:assume_role:
-    role_arn: arn:aws:iam::593291632749:role/data-engineering-infrastructure
+  aws:assumeRole:
+    roleArn: arn:aws:iam::593291632749:role/data-engineering-infrastructure
   aws:region: eu-west-1
   data-engineering-airflow:eks:
     cluster:

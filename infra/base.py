@@ -9,7 +9,7 @@ vpc_config = config.require_object("vpc")
 
 account_id = get_caller_identity().account_id
 
-caller_arn = Config("aws").require_object("assume_role")["role_arn"]
+caller_arn = Config("aws").require_object("assumeRole")["roleArn"]
 
 region = get_region().name
 
